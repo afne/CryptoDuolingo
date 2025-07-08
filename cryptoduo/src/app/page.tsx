@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Image from "next/image";
 
 export default function Home() {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -20,7 +19,7 @@ export default function Home() {
       setCurrentCrypto((prev) => (prev + 1) % cryptos.length);
     }, 3000);
     return () => clearInterval(interval);
-  }, []);
+  }, [cryptos.length]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 overflow-hidden relative">

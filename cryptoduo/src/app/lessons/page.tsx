@@ -147,12 +147,12 @@ export default function LessonsPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 flex items-center justify-center">
-        <div className="text-center text-white">
-          <div className="text-6xl mb-4 animate-bounce">🚀</div>
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center text-black">
+          <div className="text-6xl mb-4">🚀</div>
           <div className="text-2xl font-bold mb-4">Loading Crypto Lessons...</div>
-          <div className="w-64 h-2 bg-white/20 rounded-full overflow-hidden">
-            <div className="h-full bg-gradient-to-r from-yellow-400 to-orange-500 animate-pulse rounded-full"></div>
+          <div className="w-64 h-2 bg-gray-200 rounded-full overflow-hidden">
+            <div className="h-full bg-blue-600 rounded-full" style={{ width: '100%' }}></div>
           </div>
         </div>
       </div>
@@ -169,32 +169,27 @@ export default function LessonsPage() {
     };
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 flex items-center justify-center p-8">
-        <div className="bg-white/10 backdrop-blur-md rounded-3xl p-8 max-w-md w-full text-center text-white border border-white/20">
+      <div className="min-h-screen bg-white flex items-center justify-center p-8">
+        <div className="bg-gray-100 rounded-3xl p-8 max-w-md w-full text-center text-black border border-gray-200">
           <div className="text-6xl mb-4">{percentage >= 80 ? "🏆" : percentage >= 60 ? "🎯" : "📚"}</div>
           <h1 className="text-3xl font-bold mb-4">{getMessage()}</h1>
-          <div className="text-6xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500">
+          <div className="text-6xl font-bold mb-4 text-blue-600">
             {score}/{cryptoQuestions.length}
           </div>
           <div className="text-xl mb-6">{percentage}%</div>
-          
-          <div className="w-full bg-white/20 rounded-full h-3 mb-8">
-            <div 
-              className="h-3 rounded-full bg-gradient-to-r from-green-400 to-blue-500 transition-all duration-1000"
-              style={{ width: `${percentage}%` }}
-            ></div>
+          <div className="w-full bg-gray-200 rounded-full h-3 mb-8">
+            <div className="h-3 rounded-full bg-blue-600" style={{ width: `${percentage}%` }}></div>
           </div>
-
           <div className="space-y-4">
             <button
               onClick={handleRestart}
-              className="w-full bg-gradient-to-r from-yellow-400 to-orange-500 text-black font-bold py-3 px-6 rounded-full hover:scale-105 transition-all duration-300"
+              className="w-full bg-blue-600 text-white font-bold py-3 px-6 rounded-full"
             >
               🔄 Try Again
             </button>
             <Link
               href="/"
-              className="block w-full bg-white/20 text-white font-bold py-3 px-6 rounded-full border border-white/30 hover:bg-white/30 transition-all duration-300"
+              className="block w-full bg-gray-100 text-blue-600 font-bold py-3 px-6 rounded-full border border-blue-600"
             >
               🏠 Back to Home
             </Link>
@@ -205,52 +200,46 @@ export default function LessonsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 p-8">
+    <div className="min-h-screen bg-white p-8">
       <NavBar />
-      {/* Header */}
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-4xl mx-auto pl-64">
+        {/* Header */}
         <div className="flex justify-between items-center mb-8">
-          <Link href="/" className="text-white hover:text-yellow-400 transition-colors">
+          <Link href="/" className="text-blue-600">
             ← Back to Home
           </Link>
-          <div className="text-white text-lg font-bold">
+          <div className="text-blue-600 text-lg font-bold">
             Crypto Lessons
           </div>
-          <div className="text-white">
+          <div className="text-blue-600">
             Question {currentQuestionIndex + 1} of {cryptoQuestions.length}
           </div>
         </div>
-
         {/* Progress Bar */}
         <div className="mb-8">
-          <div className="flex justify-between text-white text-sm mb-2">
+          <div className="flex justify-between text-blue-600 text-sm mb-2">
             <span>Progress</span>
             <span>{Math.round(progress)}%</span>
           </div>
-          <div className="w-full bg-white/20 rounded-full h-3">
+          <div className="w-full bg-gray-200 rounded-full h-3">
             <div 
-              className="h-3 rounded-full bg-gradient-to-r from-green-400 to-blue-500 transition-all duration-500"
+              className="h-3 rounded-full bg-blue-600"
               style={{ width: `${progress}%` }}
             ></div>
           </div>
         </div>
-
         {/* Timer */}
         <div className="text-center mb-8">
-          <div className={`text-2xl font-bold ${timeLeft <= 10 ? 'text-red-400 animate-pulse' : 'text-white'}`}>
-            ⏱️ {timeLeft}s
-          </div>
+          <div className={`text-2xl font-bold ${timeLeft <= 10 ? 'text-red-600' : 'text-blue-600'}`}>⏱️ {timeLeft}s</div>
         </div>
-
         {/* Question Card */}
-        <div className="bg-white/10 backdrop-blur-md rounded-3xl p-8 mb-8 border border-white/20">
+        <div className="bg-gray-100 rounded-3xl p-8 mb-8 border border-gray-200">
           <div className="text-center mb-6">
-            <div className="text-sm text-yellow-400 mb-2">{currentQuestion.category}</div>
-            <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
+            <div className="text-sm text-blue-600 mb-2">{currentQuestion.category}</div>
+            <h2 className="text-2xl md:text-3xl font-bold text-blue-600 mb-4">
               {currentQuestion.question}
             </h2>
           </div>
-
           {/* Answer Options */}
           <div className="space-y-4">
             {currentQuestion.options.map((option, index) => (
@@ -258,72 +247,68 @@ export default function LessonsPage() {
                 key={index}
                 onClick={() => handleAnswer(index)}
                 disabled={isAnswered}
-                className={`w-full p-4 rounded-2xl text-left transition-all duration-300 ${
-                  isAnswered
+                className={`w-full p-4 rounded-2xl text-left border-2
+                  ${isAnswered
                     ? index === currentQuestion.correctAnswer
-                      ? 'bg-green-500/80 text-white border-2 border-green-400'
+                      ? 'bg-white text-blue-600 border-blue-600'
                       : index === selectedAnswer
-                      ? 'bg-red-500/80 text-white border-2 border-red-400'
-                      : 'bg-white/10 text-white border-2 border-transparent'
+                      ? 'bg-red-100 text-red-600 border-red-600'
+                      : 'bg-gray-100 text-blue-600 border-transparent'
                     : selectedAnswer === index
-                    ? 'bg-yellow-400/20 text-white border-2 border-yellow-400'
-                    : 'bg-white/10 text-white border-2 border-transparent hover:bg-white/20'
-                }`}
+                    ? 'bg-blue-100 text-blue-600 border-blue-600'
+                    : 'bg-gray-100 text-blue-600 border-transparent'}
+                `}
               >
                 <div className="flex items-center">
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center mr-4 ${
                     isAnswered
                       ? index === currentQuestion.correctAnswer
-                        ? 'bg-green-400 text-white'
+                        ? 'bg-blue-600 text-white'
                         : index === selectedAnswer
-                        ? 'bg-red-400 text-white'
-                        : 'bg-white/20 text-white'
-                      : 'bg-white/20 text-white'
+                        ? 'bg-red-600 text-white'
+                        : 'bg-gray-200 text-blue-600'
+                      : 'bg-gray-200 text-blue-600'
                   }`}>
                     {isAnswered && index === currentQuestion.correctAnswer && '✓'}
                     {isAnswered && index === selectedAnswer && index !== currentQuestion.correctAnswer && '✗'}
                     {!isAnswered && String.fromCharCode(65 + index)}
                   </div>
-                  <span className="text-lg">{option}</span>
+                  <span>{option}</span>
                 </div>
               </button>
             ))}
           </div>
-
           {/* Explanation */}
           {isAnswered && (
-            <div className="mt-6 p-4 bg-blue-500/20 rounded-2xl border border-blue-400/30">
-              <div className="text-blue-300 font-semibold mb-2">💡 Explanation:</div>
-              <div className="text-white">{currentQuestion.explanation}</div>
+            <div className="mt-6 p-4 bg-white rounded-2xl border border-gray-200">
+              <div className="text-blue-600 font-semibold mb-2">💡 Explanation:</div>
+              <div className="text-blue-600">{currentQuestion.explanation}</div>
             </div>
           )}
         </div>
-
         {/* Score */}
         <div className="text-center mb-8">
-          <div className="text-white text-lg">
-            Score: <span className="text-yellow-400 font-bold">{score}</span> / {cryptoQuestions.length}
+          <div className="text-blue-600 text-lg">
+            Score: <span className="text-blue-600 font-bold">{score}</span> / {cryptoQuestions.length}
           </div>
         </div>
-
         {/* Next Button */}
         {isAnswered && (
           <div className="text-center">
             <button
               onClick={handleNext}
-              className="bg-gradient-to-r from-yellow-400 to-orange-500 text-black font-bold py-4 px-8 rounded-full text-lg hover:scale-105 transition-all duration-300 shadow-2xl"
+              className="bg-blue-600 text-white font-bold py-4 px-8 rounded-full text-lg"
             >
               {currentQuestionIndex < cryptoQuestions.length - 1 ? 'Next Question →' : 'See Results'}
             </button>
           </div>
         )}
       </div>
-
       {/* Floating elements */}
-      <div className="fixed top-20 right-10 text-4xl animate-bounce opacity-30">💎</div>
-      <div className="fixed bottom-20 left-10 text-3xl animate-pulse opacity-40">⚡</div>
-      <div className="fixed top-1/3 left-10 text-3xl animate-spin opacity-30">🔄</div>
-      <div className="fixed bottom-1/3 right-20 text-4xl animate-bounce opacity-35">📈</div>
+      <div className="fixed top-20 right-10 text-4xl opacity-10">💎</div>
+      <div className="fixed bottom-20 left-10 text-3xl opacity-10">⚡</div>
+      <div className="fixed top-1/3 left-10 text-3xl opacity-10">🔄</div>
+      <div className="fixed bottom-1/3 right-20 text-4xl opacity-10">📈</div>
     </div>
   );
 } 

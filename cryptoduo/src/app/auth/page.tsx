@@ -34,11 +34,11 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900">
-      <form onSubmit={handleAuth} className="bg-white/10 p-8 rounded-2xl shadow-lg flex flex-col gap-4 w-80">
-        <h2 className="text-2xl text-white font-bold mb-2">{isSignUp ? 'Sign Up' : 'Log In'}</h2>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-white">
+      <form onSubmit={handleAuth} className="bg-gray-100 p-8 rounded-2xl flex flex-col gap-4 w-80 border border-gray-200">
+        <h2 className="text-2xl text-blue-600 font-bold mb-2">{isSignUp ? 'Sign Up' : 'Log In'}</h2>
         <input
-          className="p-2 rounded"
+          className="p-2 rounded bg-white text-blue-600 border border-blue-600 focus:outline-none placeholder:text-gray-400"
           type="email"
           placeholder="Email"
           value={email}
@@ -46,7 +46,7 @@ export default function AuthPage() {
           required
         />
         <input
-          className="p-2 rounded"
+          className="p-2 rounded bg-white text-blue-600 border border-blue-600 focus:outline-none placeholder:text-gray-400"
           type="password"
           placeholder="Password"
           value={password}
@@ -54,19 +54,19 @@ export default function AuthPage() {
           required
         />
         <button
-          className="bg-gradient-to-r from-yellow-400 to-orange-500 text-black font-bold py-2 px-4 rounded-full"
+          className="bg-blue-600 text-white font-bold py-2 px-4 rounded-full"
           type="submit"
         >
           {isSignUp ? 'Sign Up' : 'Log In'}
         </button>
         <button
           type="button"
-          className="text-sm text-white underline"
+          className="text-sm text-blue-600 underline"
           onClick={() => setIsSignUp(!isSignUp)}
         >
           {isSignUp ? 'Already have an account? Log in' : "Don't have an account? Sign up"}
         </button>
-        {message && <div className="text-white text-sm mt-2">{message}</div>}
+        {message && <div className="text-blue-600 text-sm mt-2">{message}</div>}
       </form>
     </div>
   );

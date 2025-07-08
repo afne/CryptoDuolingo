@@ -29,28 +29,34 @@ export default function NavBar() {
   if (!user) return null;
 
   return (
-    <nav className="w-full bg-white/10 backdrop-blur-md py-3 px-6 flex items-center justify-between shadow-md z-40">
-      <div className="flex gap-4 items-center">
-        {navLinks.map(link => (
-          <Link
-            key={link.href}
-            href={link.href}
-            className={`flex items-center gap-1 px-4 py-2 rounded-full font-semibold transition-colors duration-200
-              ${pathname === link.href ? 'bg-yellow-400 text-black' : 'text-white hover:bg-white/20'}`}
-          >
-            <span>{link.icon}</span> {link.label}
-          </Link>
-        ))}
+    <aside className="fixed top-0 left-0 h-screen w-64 bg-blue-600 flex flex-col justify-between z-50">
+      <div>
+        <div className="flex items-center gap-3 px-6 py-8">
+          <span className="text-3xl">💰</span>
+          <span className="text-2xl font-bold text-white tracking-tight">CryptoDuo</span>
+        </div>
+        <nav className="flex flex-col gap-2 mt-4">
+          {navLinks.map(link => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={`flex items-center gap-3 px-6 py-3 mx-2 rounded-xl font-semibold text-lg
+                ${pathname === link.href ? 'bg-white text-blue-600' : 'text-white hover:bg-gray-100 hover:text-blue-600'}`}
+            >
+              <span className="text-2xl">{link.icon}</span> {link.label}
+            </Link>
+          ))}
+        </nav>
       </div>
-      <div className="flex items-center gap-4">
-        <span className="text-white text-sm">{user.email}</span>
+      <div className="px-6 py-8 border-t border-white flex flex-col gap-2">
+        <div className="text-white text-sm truncate">{user.email}</div>
         <button
           onClick={handleLogout}
-          className="bg-red-500 text-white px-4 py-2 rounded-full font-bold hover:bg-red-600 transition-colors"
+          className="mt-2 bg-white text-blue-600 px-4 py-2 rounded-full font-bold w-full"
         >
           Log Out
         </button>
       </div>
-    </nav>
+    </aside>
   );
 } 

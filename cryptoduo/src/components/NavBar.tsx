@@ -10,10 +10,12 @@ const navLinks = [
   { href: '/notes', label: 'Notes', icon: '📝' },
 ];
 
+type User = { email?: string } | null;
+
 export default function NavBar() {
   const pathname = usePathname();
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User>(null);
 
   useEffect(() => {
     const supabase = createClient();

@@ -6,8 +6,10 @@ import Link from "next/link";
 import { createClient } from "../../utils/supabase/server";
 import NavBar from "../../components/NavBar";
 
+type User = { email?: string } | null;
+
 export default function Dashboard() {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 

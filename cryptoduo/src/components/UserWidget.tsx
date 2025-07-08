@@ -2,8 +2,10 @@
 import { useEffect, useState } from 'react';
 import { createClient } from '@/utils/supabase/server';
 
+type User = { email?: string } | null;
+
 export default function UserWidget() {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User>(null);
 
   useEffect(() => {
     const supabase = createClient();

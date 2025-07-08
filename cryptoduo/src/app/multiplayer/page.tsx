@@ -90,7 +90,7 @@ export default function MultiplayerPage() {
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "game_players", filter: `game_id=eq.${game.id}` },
-        (_payload: unknown) => {
+        () => {
           log('Realtime event');
           fetchPlayers();
         }

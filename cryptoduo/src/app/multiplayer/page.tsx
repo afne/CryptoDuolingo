@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import NavBar from "../../components/NavBar";
 import { createClient } from "../../utils/supabase/server";
 
@@ -28,7 +28,7 @@ export default function MultiplayerPage() {
   const [fetchPlayersFn, setFetchPlayersFn] = useState<(() => void) | null>(null);
 
   // Helper: log errors
-  const log = (...args: any[]) => { if (typeof window !== 'undefined') console.log(...args); };
+  const log = (...args: unknown[]) => { if (typeof window !== 'undefined') console.log(...args); };
 
   // Get current user
   useEffect(() => {
@@ -53,7 +53,6 @@ export default function MultiplayerPage() {
       handleExit();
       window.removeEventListener("beforeunload", handleExit);
     };
-    // eslint-disable-next-line
   }, [user, game]);
 
   // Real-time player list and game status updates
@@ -69,7 +68,7 @@ export default function MultiplayerPage() {
         .eq("game_id", game.id);
       if (error) log('fetchPlayers error:', error);
       log('Fetched players:', data);
-      setPlayers(data || []);
+      setPlayers((data as Player[]) || []);
     };
     setFetchPlayersFn(() => fetchPlayers);
     fetchPlayers();
@@ -82,7 +81,7 @@ export default function MultiplayerPage() {
         .eq("id", game.id)
         .maybeSingle();
       if (error) log('fetchGame error:', error);
-      if (data) setGame(data);
+      if (data) setGame(data as Game);
     };
 
     // Subscribe to player changes
@@ -91,8 +90,8 @@ export default function MultiplayerPage() {
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "game_players", filter: `game_id=eq.${game.id}` },
-        (payload) => {
-          log('Realtime event:', payload);
+        (_payload: unknown) => {
+          log('Realtime event');
           fetchPlayers();
         }
       )

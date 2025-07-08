@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import NavBar from '../../components/NavBar';
 
 interface Question {
   id: number;
@@ -205,6 +206,7 @@ export default function LessonsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 p-8">
+      <NavBar />
       {/* Header */}
       <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-8">

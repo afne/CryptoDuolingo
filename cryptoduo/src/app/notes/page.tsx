@@ -1,8 +1,14 @@
-import { createClient } from '@/utils/supabase/server';
+import { createClient } from '../../utils/supabase/server';
+import NavBar from '../../components/NavBar';
 
 export default async function Notes() {
   const supabase = await createClient();
-  const { data: notes } = await supabase.from("notes").select();
+  const { data: notes } = await supabase.from("test").select();
 
-  return <pre>{JSON.stringify(notes, null, 2)}</pre>
+  return (
+    <div>
+      <NavBar />
+      <pre>{JSON.stringify(notes, null, 2)}</pre>
+    </div>
+  );
 }

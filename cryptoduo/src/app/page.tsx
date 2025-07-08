@@ -1,10 +1,24 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { createClient } from '../utils/supabase/server';
 
 export default function Home() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [currentCrypto, setCurrentCrypto] = useState(0);
+  const router = useRouter();
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data }) => {
+      if (data.user) {
+        router.replace('/dashboard');
+      } else {
+        setIsLoaded(true);
+      }
+    });
+  }, [router]);
 
   const cryptos = [
     { name: 'Bitcoin', symbol: 'BTC', color: 'from-yellow-400 to-orange-500', emoji: '₿' },
@@ -14,12 +28,14 @@ export default function Home() {
   ];
 
   useEffect(() => {
-    setIsLoaded(true);
+    if (!isLoaded) return;
     const interval = setInterval(() => {
       setCurrentCrypto((prev) => (prev + 1) % cryptos.length);
     }, 3000);
     return () => clearInterval(interval);
-  }, [cryptos.length]);
+  }, [isLoaded, cryptos.length]);
+
+  if (!isLoaded) return null;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 overflow-hidden relative">
@@ -84,11 +100,12 @@ export default function Home() {
         {/* CTA buttons */}
         <div className={`flex flex-col sm:flex-row gap-4 transform transition-all duration-1000 delay-1000 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
           <a href="/lessons" className="bg-gradient-to-r from-yellow-400 to-orange-500 text-black font-bold py-4 px-8 rounded-full text-lg hover:scale-105 transition-all duration-300 shadow-2xl hover:shadow-yellow-500/50 inline-block text-center">
-            🚀 Start Learning Now
+            🚀 Start a Demo lesson now
           </a>
-          <button className="bg-white/20 backdrop-blur-md text-white font-bold py-4 px-8 rounded-full text-lg border border-white/30 hover:bg-white/30 transition-all duration-300 shadow-xl">
-            📖 Take a Tour
-          </button>
+          <a href="/auth" className="bg-white/20 backdrop-blur-md text-white font-bold py-4 px-8 rounded-full text-lg border border-white/30 hover:bg-white/30 transition-all duration-300 shadow-xl text-center">
+            🔑 Sign Up / Log In
+          </a>
+
         </div>
 
         {/* Stats */}

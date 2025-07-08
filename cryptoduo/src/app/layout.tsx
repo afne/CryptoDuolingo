@@ -17,6 +17,8 @@ export const metadata: Metadata = {
   description: "Master cryptocurrency and investing with interactive lessons, fun challenges, and real-world practice. Start your crypto journey today!",
 };
 
+import UserWidget from "../components/UserWidget";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -27,6 +29,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <UserWidget />
         {children}
       </body>
     </html>

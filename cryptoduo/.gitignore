@@ -39,3 +39,29 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Ignore local environment variables
+.env.local
+
+# Environment variables
+.env
+.env.*
+.envrc
+
+# Build output
+.next
+
+# Certificates and keys
+*.pem
+*.key
+*.crt
+*.p12
+*.jks
+*.keystore
+*.pfx
+
+# Editor and system files
+.DS_Store
+.vscode
+.idea
+*.swp

@@ -63,12 +63,6 @@ export default function Dashboard() {
             </div>
           </div>
           <div className="flex flex-col md:flex-row gap-4 justify-center mt-4">
-            <Link href="/lessons" className="bg-blue-600 text-white font-bold py-3 px-6 rounded-full mb-2 md:mb-0">
-              🚀 Continue Learning
-            </Link>
-            <Link href="/notes" className="bg-white text-blue-600 font-bold py-3 px-6 rounded-full border border-blue-600">
-              📝 My Notes
-            </Link>
           </div>
         </div>
       </div>

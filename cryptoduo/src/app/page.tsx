@@ -83,9 +83,9 @@ export default function Home() {
 
         {/* CTA buttons */}
         <div className={`flex flex-col sm:flex-row gap-4 transform transition-all duration-1000 delay-1000 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
-          <button className="bg-gradient-to-r from-yellow-400 to-orange-500 text-black font-bold py-4 px-8 rounded-full text-lg hover:scale-105 transition-all duration-300 shadow-2xl hover:shadow-yellow-500/50">
+          <a href="/lessons" className="bg-gradient-to-r from-yellow-400 to-orange-500 text-black font-bold py-4 px-8 rounded-full text-lg hover:scale-105 transition-all duration-300 shadow-2xl hover:shadow-yellow-500/50 inline-block text-center">
             🚀 Start Learning Now
-          </button>
+          </a>
           <button className="bg-white/20 backdrop-blur-md text-white font-bold py-4 px-8 rounded-full text-lg border border-white/30 hover:bg-white/30 transition-all duration-300 shadow-xl">
             📖 Take a Tour
           </button>

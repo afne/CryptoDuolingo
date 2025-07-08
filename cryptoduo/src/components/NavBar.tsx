@@ -6,6 +6,7 @@ import { createClient } from '../utils/supabase/server';
 
 const navLinks = [
   { href: '/dashboard', label: 'Dashboard', icon: '🏠' },
+  { href: '/multiplayer', label: 'Multiplayer', icon: '🎮' },
 ];
 
 type User = { email?: string } | null;

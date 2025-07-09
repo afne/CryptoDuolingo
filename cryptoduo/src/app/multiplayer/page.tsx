@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import NavBar from "../../components/NavBar";
+import MultiplayerGame from "../../components/MultiplayerGame";
 import { createClient } from "../../utils/supabase/server";
 
 // Types
@@ -16,6 +17,11 @@ interface Player {
   game_id: string;
   joined_at: string;
   user_email?: string;
+  user_profile?: {
+    first_name: string;
+    last_name: string;
+    experience_level: string;
+  };
 }
 
 export default function MultiplayerPage() {
@@ -60,15 +66,59 @@ export default function MultiplayerPage() {
     if (!game) return;
     const supabase = createClient();
 
-    // Fetch players
+    // Fetch players with profile information
     const fetchPlayers = async () => {
-      const { data, error } = await supabase
-        .from("game_players")
-        .select("*")
-        .eq("game_id", game.id);
-      if (error) log('fetchPlayers error:', error);
-      log('Fetched players:', data);
-      setPlayers((data as Player[]) || []);
+      try {
+        // Get basic player data first
+        const { data: playersData, error: playersError } = await supabase
+          .from("game_players")
+          .select("*")
+          .eq("game_id", game.id);
+        
+        if (playersError) {
+          log('fetchPlayers error:', playersError);
+          setPlayers([]);
+          return;
+        }
+        
+        log('Fetched players:', playersData);
+        
+        if (!playersData || playersData.length === 0) {
+          setPlayers([]);
+          return;
+        }
+        
+        // Get profile data for each player
+        const playerIds = playersData.map(p => p.user_id);
+        const { data: profilesData, error: profilesError } = await supabase
+          .from("user_profiles")
+          .select("user_id, first_name, last_name, experience_level")
+          .in("user_id", playerIds);
+        
+        if (profilesError) {
+          log('fetchProfiles error:', profilesError);
+        }
+        
+        // Combine player and profile data
+        const playersWithProfiles = playersData.map(player => {
+          const profile = profilesData?.find(p => p.user_id === player.user_id);
+          return {
+            ...player,
+            user_profile: profile ? {
+              first_name: profile.first_name,
+              last_name: profile.last_name,
+              experience_level: profile.experience_level
+            } : undefined
+          };
+        });
+        
+        log('Players with profiles:', playersWithProfiles);
+        setPlayers(playersWithProfiles as Player[]);
+        
+      } catch (err) {
+        log('fetchPlayers exception:', err);
+        setPlayers([]);
+      }
     };
     setFetchPlayersFn(() => fetchPlayers);
     fetchPlayers();
@@ -191,7 +241,14 @@ export default function MultiplayerPage() {
       return;
     }
     // Add to game_players
-    await supabase.from("game_players").insert({ game_id: foundGame.id, user_id: user.id });
+    const { error: insertError } = await supabase.from("game_players").insert({ game_id: foundGame.id, user_id: user.id });
+    if (insertError) {
+      log('Join game insert error:', insertError);
+      setJoinError("Failed to join game.");
+      setLoading(false);
+      return;
+    }
+    log('Successfully joined game:', foundGame.id);
     setGame(foundGame);
     setLoading(false);
   };
@@ -214,7 +271,7 @@ export default function MultiplayerPage() {
     <div className="min-h-screen bg-white">
       <NavBar />
       <div className="flex flex-col items-center justify-center min-h-screen pl-64 bg-blue-50">
-        <div className="w-full max-w-md bg-white rounded-3xl shadow-xl p-8 mt-12 mb-12 border border-blue-100">
+        <div className="w-full max-w-6xl bg-white rounded-3xl shadow-xl p-8 mt-12 mb-12 border border-blue-100">
           <h1 className="text-4xl font-extrabold text-blue-700 mb-6 tracking-tight">Multiplayer</h1>
           {!user && <p className="text-lg text-gray-700 mb-8">Sign in to play.</p>}
           {user && !game && (
@@ -289,13 +346,24 @@ export default function MultiplayerPage() {
                   {players.length === 0 && (
                     <li className="text-gray-400 italic">No players yet</li>
                   )}
-                  {players.map(p => (
-                    <li key={p.id} className="text-blue-700 font-semibold flex items-center gap-2">
-                      <span className="inline-block w-2 h-2 rounded-full bg-green-400 mr-2"></span>
-                      <span className="break-all">{p.user_id}</span>
-                      {p.user_id === game.created_by && <span className="ml-2 text-xs text-white bg-blue-600 rounded-full px-2 py-0.5">Host</span>}
-                    </li>
-                  ))}
+                  {players.map(p => {
+                    const displayName = p.user_profile?.first_name && p.user_profile?.last_name 
+                      ? `${p.user_profile.first_name} ${p.user_profile.last_name}`
+                      : p.user_email || p.user_id;
+                    
+                    return (
+                      <li key={p.id} className="text-blue-700 font-semibold flex items-center gap-2">
+                        <span className="inline-block w-2 h-2 rounded-full bg-green-400 mr-2"></span>
+                        <span className="break-all">{displayName}</span>
+                        {p.user_profile?.experience_level && (
+                          <span className="ml-2 text-xs text-blue-600 bg-blue-100 rounded-full px-2 py-0.5">
+                            {p.user_profile.experience_level}
+                          </span>
+                        )}
+                        {p.user_id === game.created_by && <span className="ml-2 text-xs text-white bg-blue-600 rounded-full px-2 py-0.5">Host</span>}
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
               {user.id === game.created_by && !game.started && (
@@ -311,7 +379,15 @@ export default function MultiplayerPage() {
                 </button>
               )}
               {game.started && (
-                <div className="text-green-600 font-bold mb-4 text-lg">Game has started!</div>
+                <div className="h-96">
+                  <MultiplayerGame 
+                    gameId={game.id} 
+                    userId={user.id} 
+                    onGameEnd={(winner) => {
+                      console.log('Game ended, winner:', winner);
+                    }}
+                  />
+                </div>
               )}
               <button
                 className="bg-red-500 hover:bg-red-600 transition text-white font-bold py-2 px-6 rounded-full text-lg shadow-md"

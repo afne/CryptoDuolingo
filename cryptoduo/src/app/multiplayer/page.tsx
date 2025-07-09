@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import NavBar from "../../components/NavBar";
 import MultiplayerGame from "../../components/MultiplayerGame";
+import MultiplayerHost from "../../components/MultiplayerHost";
 import { createClient } from "../../utils/supabase/server";
 
 // Types
@@ -10,6 +11,10 @@ interface Game {
   code: string;
   created_by: string;
   started: boolean;
+  phase?: 'lobby' | 'quiz' | 'result';
+  current_question_sequence?: number;
+  is_answer_revealed?: boolean;
+  question_start_time?: string;
 }
 interface Player {
   id: string;
@@ -131,7 +136,15 @@ export default function MultiplayerPage() {
         .eq("id", game.id)
         .maybeSingle();
       if (error) log('fetchGame error:', error);
-      if (data) setGame(data as Game);
+      if (data) {
+        const gameData = data as Game;
+        setGame({
+          ...gameData,
+          phase: gameData.phase || 'lobby',
+          current_question_sequence: gameData.current_question_sequence || 0,
+          is_answer_revealed: gameData.is_answer_revealed || false
+        });
+      }
     };
 
     // Subscribe to player changes
@@ -366,27 +379,42 @@ export default function MultiplayerPage() {
                   })}
                 </ul>
               </div>
-              {user.id === game.created_by && !game.started && (
+              {user.id === game.created_by && game.phase === 'lobby' && (
                 <button
                   className="bg-green-600 hover:bg-green-700 transition text-white font-bold py-2 px-6 rounded-full text-lg mb-4 shadow-md"
                   onClick={async () => {
                     const supabase = createClient();
-                    await supabase.from("games").update({ started: true }).eq("id", game.id);
-                    setGame({ ...game, started: true });
+                    await supabase.from("games").update({ 
+                      phase: 'quiz',
+                      current_question_sequence: 0,
+                      is_answer_revealed: false,
+                      question_start_time: new Date().toISOString()
+                    }).eq("id", game.id);
+                    setGame({ ...game, phase: 'quiz' });
                   }}
                 >
                   Start Game
                 </button>
               )}
-              {game.started && (
+              {(game.started || game.phase === 'quiz' || game.phase === 'result') && (
                 <div className="h-96">
-                  <MultiplayerGame 
-                    gameId={game.id} 
-                    userId={user.id} 
-                    onGameEnd={(winner) => {
-                      console.log('Game ended, winner:', winner);
-                    }}
-                  />
+                  {user.id === game.created_by ? (
+                    <MultiplayerHost 
+                      gameId={game.id} 
+                      userId={user.id} 
+                      onGameEnd={(winner) => {
+                        console.log('Game ended, winner:', winner);
+                      }}
+                    />
+                  ) : (
+                    <MultiplayerGame 
+                      gameId={game.id} 
+                      userId={user.id} 
+                      onGameEnd={(winner) => {
+                        console.log('Game ended, winner:', winner);
+                      }}
+                    />
+                  )}
                 </div>
               )}
               <button

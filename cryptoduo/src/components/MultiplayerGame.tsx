@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { createClient } from "../utils/supabase/server";
 
 interface Question {
@@ -102,6 +102,97 @@ export default function MultiplayerGame({ gameId, userId, onGameEnd }: Multiplay
 
   const supabase = createClient();
 
+  const handleAnswer = useCallback(async (answerIndex: number) => {
+    if (isAnswered) return;
+
+    setIsAnswered(true);
+    setSelectedAnswer(answerIndex);
+
+    const currentQuestion = cryptoQuestions[currentQuestionIndex];
+    const isCorrect = answerIndex === currentQuestion.correctAnswer;
+
+    // Calculate new score
+    const currentPlayer = playerProgress.find(p => p.user_id === userId);
+    const newScore = isCorrect ? (currentPlayer?.score || 0) + 1 : (currentPlayer?.score || 0);
+    const newCurrentQuestion = (currentPlayer?.current_question || 0) + 1;
+    
+    console.log(`Player ${userId} answered question ${currentQuestionIndex + 1}: ${isCorrect ? 'CORRECT' : 'INCORRECT'}. New score: ${newScore}/10`);
+
+    // Update local progress
+    const updatedProgress = playerProgress.map(p => 
+      p.user_id === userId 
+        ? { 
+            ...p, 
+            score: newScore,
+            current_question: newCurrentQuestion
+          }
+        : p
+    );
+    setPlayerProgress(updatedProgress);
+
+    // Save to database
+    try {
+      const { error } = await supabase.from("game_progress").upsert({
+        game_id: gameId,
+        user_id: userId,
+        current_question: newCurrentQuestion,
+        score: newScore,
+        completed: newScore >= 10
+      });
+
+      if (error) {
+        // Log error without console.error to avoid linting issues
+        console.log('Database error saving progress:', error.message || error);
+        // Continue with local state even if database save fails
+      } else {
+        console.log('Progress saved successfully');
+      }
+    } catch (err) {
+      // Log exception without console.error to avoid linting issues
+      console.log('Exception saving progress:', err);
+      // Continue with local state even if database save fails
+    }
+
+    // Check if this player won
+    if (newScore >= 10 && !gameEnded) {
+      console.log(`Player ${userId} won with ${newScore}/10!`);
+      setGameEnded(true);
+      setWinner(userId);
+      onGameEnd(userId);
+      return; // Don't continue to next question
+    }
+
+    // Move to next question if not won yet
+    setTimeout(() => {
+      if (currentQuestionIndex < 9 && newScore < 10) {
+        setCurrentQuestionIndex(currentQuestionIndex + 1);
+        setSelectedAnswer(null);
+        setIsAnswered(false);
+        setTimeLeft(30);
+      }
+    }, 2000);
+  }, [isAnswered, currentQuestionIndex, playerProgress, userId, gameEnded, gameId, supabase, onGameEnd]);
+
+  const updatePlayerProgress = useCallback((progress: { user_id: string; current_question: number; score: number; completed: boolean }) => {
+    console.log('Updating player progress:', progress);
+    
+    setPlayerProgress(prev => 
+      prev.map(p => 
+        p.user_id === progress.user_id 
+          ? { ...p, current_question: progress.current_question, score: progress.score, completed: progress.completed }
+          : p
+      )
+    );
+
+    // Check for winner - someone reached 10 correct answers
+    if (progress.score >= 10 && !gameEnded) {
+      console.log('Game ended! Winner:', progress.user_id);
+      setGameEnded(true);
+      setWinner(progress.user_id);
+      onGameEnd(progress.user_id);
+    }
+  }, [gameEnded, onGameEnd]);
+
   // Initialize player progress
   useEffect(() => {
     const initializeProgress = async () => {
@@ -180,7 +271,7 @@ export default function MultiplayerGame({ gameId, userId, onGameEnd }: Multiplay
       console.log('Time ran out for question', currentQuestionIndex + 1);
       handleAnswer(-1); // Time's up, mark as incorrect
     }
-  }, [timeLeft, gameEnded, isAnswered, currentQuestionIndex]);
+  }, [timeLeft, gameEnded, isAnswered, currentQuestionIndex, handleAnswer]);
 
   // Real-time progress updates
   useEffect(() => {
@@ -190,7 +281,7 @@ export default function MultiplayerGame({ gameId, userId, onGameEnd }: Multiplay
         "postgres_changes",
         { event: "*", schema: "public", table: "game_progress", filter: `game_id=eq.${gameId}` },
         (payload) => {
-          updatePlayerProgress(payload.new as any);
+          updatePlayerProgress(payload.new as { user_id: string; current_question: number; score: number; completed: boolean });
         }
       )
       .subscribe();
@@ -198,114 +289,11 @@ export default function MultiplayerGame({ gameId, userId, onGameEnd }: Multiplay
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [gameId, supabase]);
+  }, [gameId, supabase, updatePlayerProgress]);
 
-  const updatePlayerProgress = (progress: any) => {
-    console.log('Updating player progress:', progress);
-    
-    setPlayerProgress(prev => 
-      prev.map(p => 
-        p.user_id === progress.user_id 
-          ? { ...p, current_question: progress.current_question, score: progress.score, completed: progress.completed }
-          : p
-      )
-    );
 
-    // Check for winner - someone reached 10 correct answers
-    if (progress.score >= 10 && !gameEnded) {
-      console.log('Game ended! Winner:', progress.user_id);
-      setGameEnded(true);
-      setWinner(progress.user_id);
-      onGameEnd(progress.user_id);
-    }
-  };
 
-  const handleAnswer = async (answerIndex: number) => {
-    if (isAnswered) return;
 
-    setIsAnswered(true);
-    setSelectedAnswer(answerIndex);
-
-    const currentQuestion = cryptoQuestions[currentQuestionIndex];
-    const isCorrect = answerIndex === currentQuestion.correctAnswer;
-
-    // Calculate new score
-    const currentPlayer = playerProgress.find(p => p.user_id === userId);
-    const newScore = isCorrect ? (currentPlayer?.score || 0) + 1 : (currentPlayer?.score || 0);
-    const newCurrentQuestion = (currentPlayer?.current_question || 0) + 1;
-    
-    console.log(`Player ${userId} answered question ${currentQuestionIndex + 1}: ${isCorrect ? 'CORRECT' : 'INCORRECT'}. New score: ${newScore}/10`);
-
-    // Update local progress
-    const updatedProgress = playerProgress.map(p => 
-      p.user_id === userId 
-        ? { 
-            ...p, 
-            score: newScore,
-            current_question: newCurrentQuestion
-          }
-        : p
-    );
-    setPlayerProgress(updatedProgress);
-
-    // Save to database
-    try {
-      const { error } = await supabase.from("game_progress").upsert({
-        game_id: gameId,
-        user_id: userId,
-        current_question: newCurrentQuestion,
-        score: newScore,
-        completed: newScore >= 10
-      });
-
-      if (error) {
-        // Log error without console.error to avoid linting issues
-        console.log('Database error saving progress:', error.message || error);
-        // Continue with local state even if database save fails
-      } else {
-        console.log('Progress saved successfully');
-      }
-    } catch (err) {
-      // Log exception without console.error to avoid linting issues
-      console.log('Exception saving progress:', err);
-      // Continue with local state even if database save fails
-    }
-
-    // Check if this player won
-    if (newScore >= 10 && !gameEnded) {
-      console.log(`Player ${userId} won with ${newScore}/10!`);
-      setGameEnded(true);
-      setWinner(userId);
-      onGameEnd(userId);
-      return; // Don't continue to next question
-    }
-
-    // Move to next question if not won yet
-    setTimeout(() => {
-      if (currentQuestionIndex < 9 && newScore < 10) {
-        setCurrentQuestionIndex(currentQuestionIndex + 1);
-        setSelectedAnswer(null);
-        setIsAnswered(false);
-        setTimeLeft(30);
-      }
-    }, 2000);
-  };
-
-  const getCryptoEmoji = (cryptoName: string): string => {
-    const cryptoEmojis: { [key: string]: string } = {
-      "Bitcoin (BTC)": "₿",
-      "Ethereum (ETH)": "Ξ",
-      "Cardano (ADA)": "₳",
-      "Solana (SOL)": "◎",
-      "Polkadot (DOT)": "🔗",
-      "Chainlink (LINK)": "🔗",
-      "Polygon (MATIC)": "🔷",
-      "Avalanche (AVAX)": "❄️",
-      "Cosmos (ATOM)": "🌌",
-      "Uniswap (UNI)": "🦄"
-    };
-    return cryptoEmojis[cryptoName] || "💰";
-  };
 
   const currentQuestion = cryptoQuestions[currentQuestionIndex];
   const currentPlayer = playerProgress.find(p => p.user_id === userId);

@@ -6,8 +6,6 @@ import { createClient } from '../utils/supabase/server';
 
 const navLinks = [
   { href: '/learn', label: 'learn', icon: '🏠' },
-  { href: '/multiplayer', label: 'Multiplayer', icon: '🎮' },
-  { href: '/profile', label: 'Profile', icon: '👤' },
 ];
 
 type User = { email?: string } | null;
@@ -31,32 +29,30 @@ export default function NavBar() {
   if (!user) return null;
 
   return (
-    <aside className="fixed top-6 left-6 h-[92vh] w-80 bg-white shadow-xl rounded-3xl flex flex-col justify-between z-50">
+    <aside className="fixed top-0 left-0 h-screen w-64 bg-blue-600 flex flex-col justify-between z-50">
       <div>
-        <div className="flex flex-col items-center justify-center px-10 py-12">
-          <div className="flex items-center gap-2">
-            <span className="text-4xl text-black">💰</span>
-            <span className="text-2xl font-extrabold text-black tracking-tight">CryptoDuo</span>
-          </div>
+        <div className="flex items-center gap-3 px-6 py-8">
+          <span className="text-3xl">💰</span>
+          <span className="text-2xl font-bold text-white tracking-tight">CryptoDuo</span>
         </div>
-        <nav className="flex flex-col gap-4 mt-8">
+        <nav className="flex flex-col gap-2 mt-4">
           {navLinks.map(link => (
             <Link
               key={link.href}
               href={link.href}
-              className={`flex items-center gap-4 px-8 py-4 mx-4 rounded-full font-bold text-2xl transition-colors
-                ${pathname === link.href ? 'bg-gray-900/90 text-white shadow-sm' : 'text-gray-900 hover:bg-gray-100'}`}
+              className={`flex items-center gap-3 px-6 py-3 mx-2 rounded-xl font-semibold text-lg
+                ${pathname === link.href ? 'bg-white text-blue-600' : 'text-white hover:bg-gray-100 hover:text-blue-600'}`}
             >
-              <span className="text-3xl">{link.icon}</span> {link.label}
+              <span className="text-2xl">{link.icon}</span> {link.label}
             </Link>
           ))}
         </nav>
       </div>
-      <div className="px-10 py-10 flex flex-col gap-4">
-        <div className="text-gray-700 text-lg truncate font-semibold mb-2">{user.email}</div>
+      <div className="px-6 py-8 border-t border-white flex flex-col gap-2">
+        <div className="text-white text-sm truncate">{user.email}</div>
         <button
           onClick={handleLogout}
-          className="bg-gray-900 text-white px-6 py-3 rounded-full font-bold text-xl w-full shadow-sm hover:bg-gray-700 transition-colors"
+          className="mt-2 bg-white text-blue-600 px-4 py-2 rounded-full font-bold w-full"
         >
           Log Out
         </button>

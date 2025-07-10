@@ -4,10 +4,29 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/server";
 import NavBar from "@/components/NavBar";
 
+interface Section {
+  id: string;
+  order_index: number;
+  name: string;
+}
+
+interface Unit {
+  id: string;
+  order_index: number;
+  name: string;
+}
+
+interface Lesson {
+  id: string;
+  name: string;
+  is_unlocked: boolean;
+  order_index: number;
+}
+
 export default function CryptoPathPage() {
-  const [section, setSection] = useState<any>(null);
-  const [unit, setUnit] = useState<any>(null);
-  const [lessons, setLessons] = useState<any[]>([]);
+  const [section, setSection] = useState<Section | null>(null);
+  const [unit, setUnit] = useState<Unit | null>(null);
+  const [lessons, setLessons] = useState<Lesson[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -47,8 +66,6 @@ export default function CryptoPathPage() {
     fetchCryptoPath();
   }, []);
 
-  const allLessonsComplete = lessons.every((lesson) => lesson.is_unlocked);
-
   return (
     <div>
       <NavBar />
@@ -64,7 +81,7 @@ export default function CryptoPathPage() {
                 {/* Left Arrow + Section Info */}
                 <div className="flex items-center gap-4">
                   <span className="text-white text-3xl">←</span>
-                  <div className="flex flex-col">
+                  <div>
                     <p className="text-lg font-bold uppercase text-white/80">
                       Section {section?.order_index}, Unit {unit?.order_index}
                     </p>
@@ -81,14 +98,13 @@ export default function CryptoPathPage() {
                 </button>
               </div>
 
-
               {/* Lesson Path */}
               <div className="relative flex flex-col items-center gap-6 mt-8">
-                {[...lessons, ...Array(3).fill({ extra: true })].map((lesson, idx, arr) => {
+                {[...lessons, ...Array(3).fill({ extra: true })].map((lesson, idx) => {
                   // Zig-zag pattern: left, center, right, center, ...
                   const positions = ["-ml-32", "ml-0", "ml-32", "ml-0"];
                   const posClass = positions[idx % positions.length];
-                  const isExtra = lesson.extra;
+                  const isExtra = 'extra' in lesson;
                   return (
                     <div key={lesson.id || `extra-btc-${idx}`} className={`flex flex-col items-center ${posClass} relative`} style={{ minHeight: '8rem' }}>
                       {isExtra ? (

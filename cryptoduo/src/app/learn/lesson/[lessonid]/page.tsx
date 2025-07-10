@@ -5,9 +5,16 @@ import { useParams } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import NavBar from "@/components/NavBar";
 
+interface Lesson {
+  id: string;
+  name: string;
+  description?: string;
+  content?: string;
+}
+
 export default function LessonPage() {
   const { lessonId } = useParams();
-  const [lesson, setLesson] = useState<any>(null);
+  const [lesson, setLesson] = useState<Lesson | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

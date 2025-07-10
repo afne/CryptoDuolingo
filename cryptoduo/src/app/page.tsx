@@ -7,7 +7,7 @@ import { createClient } from '../utils/supabase/server';
 export default function Home() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [currentCrypto, setCurrentCrypto] = useState(0);
-  const [slideDirection, setSlideDirection] = useState('right');
+
   const [scrollY, setScrollY] = useState(0);
   const router = useRouter();
 
@@ -28,7 +28,6 @@ export default function Home() {
   useEffect(() => {
     if (!isLoaded) return;
     const interval = setInterval(() => {
-      setSlideDirection('right');
       setCurrentCrypto((prev) => (prev + 1) % cryptos.length);
     }, 3000);
     return () => clearInterval(interval);
@@ -150,7 +149,6 @@ export default function Home() {
                       <button
                         key={index}
                         onClick={() => {
-                          setSlideDirection(index > currentCrypto ? 'right' : 'left');
                           setCurrentCrypto(index);
                         }}
                         className={`w-2 h-2 rounded-full transition-all duration-300 ${
@@ -174,7 +172,7 @@ export default function Home() {
               Everything you need to succeed
             </h2>
             <p className="text-lg text-gray-200 max-w-2xl mx-auto">
-              From beginner to expert, we've got you covered with comprehensive learning tools
+              From beginner to expert, we&apos;ve got you covered with comprehensive learning tools
             </p>
           </div>
 

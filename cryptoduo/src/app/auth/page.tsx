@@ -28,7 +28,7 @@ export default function AuthPage() {
       if (result.error) {
         setMessage(result.error.message);
       } else {
-        router.push('/dashboard');
+        router.push('/learn');
       }
     }
   };

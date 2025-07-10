@@ -89,7 +89,7 @@ export default function Home() {
               <span className="text-2xl font-bold">CryptoDuo</span>
             </div>
             <div className="flex space-x-6">
-              <a href="/auth" className="text-gray-300 hover:text-white transition-colors">Sign In</a>
+              <a href="/auth" className="text-gray-300 hover:text-white px-4 py-2 transition-colors">Sign In</a>
               <a href="/auth" className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg font-medium transition-colors">
                 Get Started
               </a>

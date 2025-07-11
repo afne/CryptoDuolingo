@@ -102,7 +102,7 @@ export default function Home() {
               Learn Crypto
             </h1>
             <p className="text-xl md:text-2xl text-gray-100 mb-6 max-w-3xl mx-auto leading-relaxed">
-              Learn cryptocurrency and investing like a pro with interactive lessons, 
+              Learn cryptocurrency and make better informed investment decisions with interactive lessons, 
               <span className="text-blue-400 font-semibold"> real-world practice</span>, and expert guidance.
             </p>
             

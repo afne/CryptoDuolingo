@@ -3,11 +3,14 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { createClient } from '../utils/supabase/server';
+import Image from 'next/image';
 
 const navLinks = [
-  { href: '/learn', label: 'learn', icon: '🏠' },
-  { href: '/multiplayer', label: 'multiplayer', icon: '🎮' },
-  { href: '/profile', label: 'profile', icon: '👤' },
+  { href: '/learn', label: 'Learn', icon: '🏠' },
+  { href: '/multiplayer', label: 'Multiplayer', icon: '🎮' },
+  { href: '/news', label: 'News', icon: '📰' },
+  { href: '/prices', label: 'Live Prices', icon: '💵' },
+  { href: '/profile', label: 'Profile', icon: '👤' },
 ];
 
 type User = { email?: string } | null;
@@ -16,49 +19,81 @@ export default function NavBar() {
   const pathname = usePathname();
   const router = useRouter();
   const [user, setUser] = useState<User>(null);
+  const [guestName, setGuestName] = useState<string | null>(null);
 
   useEffect(() => {
     const supabase = createClient();
     supabase.auth.getUser().then(({ data }) => setUser(data.user));
+    // Check for guest login (firstName in localStorage)
+    if (typeof window !== 'undefined') {
+      const name = localStorage.getItem('firstName');
+      if (name) setGuestName(name);
+    }
   }, []);
 
   const handleLogout = async () => {
     const supabase = createClient();
     await supabase.auth.signOut();
+    localStorage.removeItem('firstName');
     router.push('/');
   };
 
-  if (!user) return null;
+  if (!user && !guestName) return null;
 
   return (
-    <aside className="fixed top-0 left-0 h-screen w-64 bg-blue-600 flex flex-col justify-between z-50">
+    <aside className="fixed top-0 left-0 h-screen w-64 bg-white border-r border-gray-200 flex flex-col justify-between z-50 shadow-sm">
+      {/* Logo */}
       <div>
         <div className="flex items-center gap-3 px-6 py-8">
           <span className="text-3xl">💰</span>
-          <span className="text-2xl font-bold text-white tracking-tight">CryptoDuo</span>
+          <span className="text-2xl font-bold tracking-tight text-black">CryptoDuo</span>
         </div>
-        <nav className="flex flex-col gap-2 mt-4">
-          {navLinks.map(link => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={`flex items-center gap-3 px-6 py-3 mx-2 rounded-xl font-semibold text-lg
-                ${pathname === link.href ? 'bg-white text-blue-600' : 'text-white hover:bg-gray-100 hover:text-blue-600'}`}
-            >
-              <span className="text-2xl">{link.icon}</span> {link.label}
-            </Link>
-          ))}
+
+        {/* Nav links */}
+        <nav className="flex flex-col gap-2 px-2">
+          {navLinks.map(link => {
+            const isActive = pathname === link.href;
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-base transition
+                  ${isActive
+                    ? 'bg-black text-white'
+                    : 'text-black hover:bg-gray-100'}`}
+              >
+                <span className="text-xl">{link.icon}</span>
+                <span>{link.label}</span>
+              </Link>
+            );
+          })}
         </nav>
       </div>
-      <div className="px-6 py-8 border-t border-white flex flex-col gap-2">
-        <div className="text-white text-sm truncate">{user.email}</div>
+
+      {/* User profile and logout */}
+      <div className="px-6 py-6 border-t border-gray-200">
+        <div className="flex items-center gap-3">
+          <Image
+            src="/profile-avatar.png"
+            alt="Profile"
+            width={40}
+            height={40}
+            className="rounded-full"
+          />
+          <div className="flex flex-col">
+            <span className="font-medium text-sm text-black truncate">
+              {user?.email || guestName || 'Guest'}
+            </span>
+            <span className="text-xs text-gray-500">{user ? 'Admin' : 'Guest'}</span>
+          </div>
+        </div>
         <button
           onClick={handleLogout}
-          className="mt-2 bg-white text-blue-600 px-4 py-2 rounded-full font-bold w-full"
+          className="mt-4 w-full text-sm font-semibold text-red-500 hover:underline"
         >
           Log Out
         </button>
       </div>
     </aside>
   );
-} 
+}

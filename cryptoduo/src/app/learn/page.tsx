@@ -66,6 +66,50 @@ export default function CryptoPathPage() {
     fetchCryptoPath();
   }, []);
 
+  // Hardcoded quests for gamified quest bar
+  const quests = [
+    {
+      id: 1,
+      title: "Complete Your First Lesson",
+      description: "Finish any lesson to earn 10 XP.",
+      icon: "🎯",
+      progress: 1,
+      total: 1,
+      reward: "+10 XP",
+      completed: true
+    },
+    {
+      id: 2,
+      title: "Daily Streak",
+      description: "Log in and complete a lesson today.",
+      icon: "🔥",
+      progress: 1,
+      total: 1,
+      reward: "+5 XP",
+      completed: true
+    },
+    {
+      id: 3,
+      title: "Answer 5 Questions Correctly",
+      description: "Get 5 questions right in any lesson.",
+      icon: "✅",
+      progress: 3,
+      total: 5,
+      reward: "+15 XP",
+      completed: false
+    },
+    {
+      id: 4,
+      title: "Invite a Friend",
+      description: "Invite a friend to join CryptoDuolingo.",
+      icon: "🤝",
+      progress: 0,
+      total: 1,
+      reward: "+20 XP",
+      completed: false
+    }
+  ];
+
   return (
     <div>
       <NavBar />
@@ -157,7 +201,34 @@ export default function CryptoPathPage() {
         {/* Right Column - Quests */}
         <div className="w-[600px] bg-white border-l border-gray-200 p-8">
           <h2 className="text-2xl font-bold text-black mb-4">Quests</h2>
-          <p className="text-gray-700">Quest content coming soon...</p>
+          <div className="flex flex-col gap-6">
+            {quests.map(quest => (
+              <div
+                key={quest.id}
+                className={`flex items-center gap-4 p-4 rounded-2xl shadow-sm border transition-all duration-200
+                  ${quest.completed ? 'bg-green-50 border-green-200' : 'bg-blue-50 border-blue-200 hover:shadow-md'}`}
+              >
+                <span className="text-4xl">{quest.icon}</span>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <span className={`font-bold text-lg ${quest.completed ? 'text-green-700' : 'text-blue-700'}`}>{quest.title}</span>
+                    {quest.completed && <span className="ml-2 px-2 py-0.5 text-xs bg-green-200 text-green-800 rounded-full font-bold">Completed</span>}
+                  </div>
+                  <div className="text-gray-600 text-sm mb-2">{quest.description}</div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-32 h-3 bg-gray-200 rounded-full overflow-hidden">
+                      <div
+                        className={`h-3 rounded-full ${quest.completed ? 'bg-green-400' : 'bg-blue-400'}`}
+                        style={{ width: `${(quest.progress / quest.total) * 100}%` }}
+                      />
+                    </div>
+                    <span className="text-xs font-semibold text-gray-700">{quest.progress}/{quest.total}</span>
+                    <span className="ml-auto text-xs font-bold text-yellow-600 bg-yellow-100 px-2 py-0.5 rounded-full">{quest.reward}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </main>
     </div>

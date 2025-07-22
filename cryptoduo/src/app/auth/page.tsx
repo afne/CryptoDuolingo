@@ -45,7 +45,7 @@ export default function AuthPage() {
         {/* Logo and Title */}
         <div className="text-center mb-8">
           <div className="text-6xl mb-4">💹</div>
-          <h1 className="text-4xl font-extrabold text-gray-900 mb-2">CryptoDuo</h1>
+          <h1 className="text-4xl font-extrabold text-gray-900 mb-2">DeCrypto</h1>
           <p className="text-gray-600 text-lg">Master Crypto & Investing Like a Pro</p>
         </div>
 

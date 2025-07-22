@@ -102,7 +102,7 @@ export default function CryptoPathPage() {
     {
       id: 4,
       title: "Invite a Friend",
-      description: "Invite a friend to join CryptoDuolingo.",
+      description: "Invite a friend to join DeCrypto.",
       icon: "🤝",
       progress: 0,
       total: 1,

@@ -86,7 +86,7 @@ export default function Home() {
           <nav className="relative z-10 flex justify-between items-center px-8 py-6">
             <div className="flex items-center space-x-2">
               <span className="text-3xl">💹</span>
-              <span className="text-2xl font-bold">CryptoDuo</span>
+              <span className="text-2xl font-bold">DeCrypto</span>
             </div>
             <div className="flex space-x-6">
               <a href="/auth" className="text-gray-300 hover:text-white px-4 py-2 transition-colors">Sign In</a>
@@ -225,7 +225,7 @@ export default function Home() {
             <div className="flex flex-col md:flex-row justify-between items-center">
               <div className="flex items-center space-x-2 mb-4 md:mb-0">
                 <span className="text-xl">💹</span>
-                <span className="text-lg font-bold">CryptoDuo</span>
+                <span className="text-lg font-bold">DeCrypto</span>
               </div>
               <div className="flex space-x-6 text-gray-400">
                 <a href="#" className="hover:text-white transition-colors text-sm">Privacy</a>

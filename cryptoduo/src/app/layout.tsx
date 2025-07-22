@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CryptoDuo - Learn Crypto & Investing Like a Pro",
+  title: "DeCrypto - Learn Crypto & Investing Like a Pro",
   description: "Master cryptocurrency and investing with interactive lessons, fun challenges, and real-world practice. Start your crypto journey today!",
 };
 

@@ -9,8 +9,8 @@ const navLinks = [
   { href: '/learn', label: 'Learn', icon: '🏠' },
   { href: '/multiplayer', label: 'Multiplayer', icon: '🎮' },
   { href: '/news', label: 'News', icon: '📰' },
-  { href: '/prices', label: 'Live Prices', icon: '💵' },
-  { href: '/profile', label: 'Profile', icon: '👤' },
+  { href: '/prices', label: 'Live Prices', icon: '💵' }
+  // Removed Profile tab
 ];
 
 type User = { email?: string } | null;
@@ -46,7 +46,7 @@ export default function NavBar() {
       <div>
         <div className="flex items-center gap-3 px-6 py-8">
           <span className="text-3xl">💰</span>
-          <span className="text-2xl font-bold tracking-tight text-black">CryptoDuo</span>
+          <span className="text-2xl font-bold tracking-tight text-black">DeCrypto</span>
         </div>
 
         {/* Nav links */}
@@ -72,20 +72,10 @@ export default function NavBar() {
 
       {/* User profile and logout */}
       <div className="px-6 py-6 border-t border-gray-200">
-        <div className="flex items-center gap-3">
-          <Image
-            src="/profile-avatar.png"
-            alt="Profile"
-            width={40}
-            height={40}
-            className="rounded-full"
-          />
-          <div className="flex flex-col">
-            <span className="font-medium text-sm text-black truncate">
-              {user?.email || guestName || 'Guest'}
-            </span>
-            <span className="text-xs text-gray-500">{user ? 'Admin' : 'Guest'}</span>
-          </div>
+        <div className="flex flex-col items-center text-center">
+          <span className="font-medium text-base text-black truncate">
+            Welcome, {user?.email || guestName || 'Guest'}!
+          </span>
         </div>
         <button
           onClick={handleLogout}

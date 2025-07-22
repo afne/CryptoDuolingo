@@ -3,7 +3,6 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { createClient } from '../utils/supabase/server';
-import Image from 'next/image';
 
 const navLinks = [
   { href: '/learn', label: 'Learn', icon: '🏠' },

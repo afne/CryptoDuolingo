@@ -100,7 +100,7 @@ export default function MultiplayerPage() {
             </>
           )}
           {quizStarted && !showLeaderboard && (
-            <MultiplayerGame gameId={"single-session"} userId={user ? user.id : "local-user"} onGameEnd={handleGameEnd} />
+            <MultiplayerGame userId={user ? user.id : "local-user"} onGameEnd={handleGameEnd} />
           )}
           {showLeaderboard && (
             <div className="w-full mt-8">

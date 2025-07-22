@@ -10,7 +10,6 @@ interface Question {
 }
 
 interface MultiplayerGameProps {
-  gameId: string;
   userId: string;
   onGameEnd: (winner: string) => void;
 }
@@ -80,22 +79,13 @@ const cryptoQuestions: Question[] = [
 
 const QUESTION_TIME = 20; // seconds per question
 
-export default function MultiplayerGame({ gameId, userId, onGameEnd }: MultiplayerGameProps) {
+export default function MultiplayerGame({ userId, onGameEnd }: MultiplayerGameProps) {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [score, setScore] = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
   const [timeLeft, setTimeLeft] = useState(QUESTION_TIME);
   const [quizEnded, setQuizEnded] = useState(false);
-
-  useEffect(() => {
-    if (timeLeft > 0 && !quizEnded) {
-      const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
-      return () => clearTimeout(timer);
-    } else if (timeLeft === 0 && !quizEnded) {
-      handleAnswer(null); // Time's up, no answer
-    }
-  }, [timeLeft, quizEnded]);
 
   const handleAnswer = (answerIdx: number | null) => {
     if (quizEnded) return;
@@ -115,6 +105,15 @@ export default function MultiplayerGame({ gameId, userId, onGameEnd }: Multiplay
       }
     }, 1200);
   };
+
+  useEffect(() => {
+    if (timeLeft > 0 && !quizEnded) {
+      const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
+      return () => clearTimeout(timer);
+    } else if (timeLeft === 0 && !quizEnded) {
+      handleAnswer(null); // Time's up, no answer
+    }
+  }, [timeLeft, quizEnded, handleAnswer]);
 
   useEffect(() => {
     if (quizEnded) {

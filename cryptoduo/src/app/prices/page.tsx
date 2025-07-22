@@ -46,7 +46,6 @@ function formatCurrency(num: number) {
 
 export default function PricesPage() {
   const [sortKey, setSortKey] = useState<keyof CoinData>("marketCap");
-  const [sortAsc, setSortAsc] = useState(false);
 
   // Live market cap and volume state
   const [marketCap, setMarketCap] = useState(6174277433643);
@@ -93,7 +92,7 @@ export default function PricesPage() {
   const sortedCoins = [...mockCoins].sort((a, b) => {
     const valA = a[sortKey] as number;
     const valB = b[sortKey] as number;
-    return sortAsc ? valA - valB : valB - valA;
+    return valB - valA; // Always sort descending
   });
 
   return (

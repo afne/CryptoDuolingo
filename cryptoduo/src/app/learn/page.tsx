@@ -24,11 +24,31 @@ interface Lesson {
   order_index: number;
 }
 
+function isNewGuest() {
+  if (typeof window === 'undefined') return false;
+  const firstName = localStorage.getItem('firstName');
+  const greeted = localStorage.getItem('greeted');
+  return !!firstName && !greeted;
+}
+
 export default function CryptoPathPage() {
   const [section, setSection] = useState<Section | null>(null);
   const [unit, setUnit] = useState<Unit | null>(null);
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showGuestPopup, setShowGuestPopup] = useState(false);
+  const [guestName, setGuestName] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const firstName = localStorage.getItem('firstName');
+      setGuestName(firstName);
+      if (isNewGuest()) {
+        setShowGuestPopup(true);
+        localStorage.setItem('greeted', 'true');
+      }
+    }
+  }, []);
 
   useEffect(() => {
     const fetchCryptoPath = async () => {
@@ -114,6 +134,28 @@ export default function CryptoPathPage() {
   return (
     <div>
       <NavBar />
+      {/* Guest Greeting Popup */}
+      {showGuestPopup && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+          <div className="bg-white rounded-3xl shadow-2xl p-8 max-w-sm w-full flex flex-col items-center animate-fade-in">
+            <div className="text-5xl mb-4">👋</div>
+            <h2 className="text-2xl font-extrabold text-gray-900 mb-2">Welcome{guestName ? `, ${guestName}` : ''}!</h2>
+            <p className="text-gray-700 text-center mb-6">We&apos;re excited to have you on DeCrypto.<br/>Start your journey with the Multiplayer Quiz!</p>
+            <button
+              onClick={() => { setShowGuestPopup(false); window.location.href = '/multiplayer'; }}
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-xl text-lg transition-all duration-200 transform hover:scale-105 shadow-lg w-full mb-2"
+            >
+              🚀 Go to Multiplayer Quiz
+            </button>
+            <button
+              onClick={() => setShowGuestPopup(false)}
+              className="text-gray-500 text-sm mt-2 hover:underline"
+            >
+              Maybe later
+            </button>
+          </div>
+        </div>
+      )}
       <main className="ml-64 min-h-screen flex bg-white">
         {/* Left Column - Banner and Quiz Path */}
         <div className="flex-1 flex flex-col items-center px-4 py-12">

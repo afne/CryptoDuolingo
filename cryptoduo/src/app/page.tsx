@@ -4,10 +4,16 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '../utils/supabase/server';
 
+function isNewGuest() {
+  if (typeof window === 'undefined') return false;
+  const firstName = localStorage.getItem('firstName');
+  const greeted = localStorage.getItem('greeted');
+  return !!firstName && !greeted;
+}
+
 export default function Home() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [currentCrypto, setCurrentCrypto] = useState(0);
-
   const [scrollY, setScrollY] = useState(0);
   const router = useRouter();
 

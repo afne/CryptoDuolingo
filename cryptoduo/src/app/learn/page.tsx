@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/server";
 import NavBar from "@/components/NavBar";
+import Image from 'next/image';
 
 interface Section {
   id: string;
@@ -153,9 +154,11 @@ export default function CryptoPathPage() {
                     <div key={lesson.id || `extra-btc-${idx}`} className={`flex flex-col items-center ${posClass} relative`} style={{ minHeight: '8rem' }}>
                       {isExtra ? (
                         <div className="w-32 h-32 rounded-full flex items-center justify-center shadow bg-white">
-                          <img 
+                          <Image 
                             src="/btc_non_hover.png" 
                             alt="Lesson" 
+                            width={128}
+                            height={128}
                             className="w-32 h-32 transition-all"
                             onMouseEnter={(e) => {
                               e.currentTarget.src = '/btc_hover.png';
@@ -173,9 +176,11 @@ export default function CryptoPathPage() {
                           }`}
                         >
                           {lesson.is_unlocked ? (
-                            <img 
+                            <Image 
                               src="/btc_non_hover.png" 
                               alt="Lesson" 
+                              width={128}
+                              height={128}
                               className="w-32 h-32 hover:src='/btc_hover.png' transition-all"
                               onMouseEnter={(e) => {
                                 e.currentTarget.src = '/btc_hover.png';

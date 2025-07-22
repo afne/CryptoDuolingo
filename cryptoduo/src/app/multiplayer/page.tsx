@@ -4,18 +4,6 @@ import NavBar from "../../components/NavBar";
 import MultiplayerGame from "../../components/MultiplayerGame";
 import { createClient } from "../../utils/supabase/server";
 
-// Types
-interface Game {
-  id: string;
-  code: string;
-  created_by: string;
-  started: boolean;
-  phase?: 'lobby' | 'quiz' | 'result';
-  current_question_sequence?: number;
-  is_answer_revealed?: boolean;
-  question_start_time?: string;
-}
-
 export default function MultiplayerPage() {
   const [user, setUser] = useState<{ id: string; email?: string } | null>(null);
   // Leaderboard state

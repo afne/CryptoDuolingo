@@ -177,7 +177,7 @@ export default function MultiplayerHost({ gameId, onGameEnd }: MultiplayerHostPr
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [gameId, hasShownChoices, gameState.current_question_sequence]); // Remove dependencies that cause infinite loops
+  }, [gameId, hasShownChoices, gameState.current_question_sequence, supabase]); // Remove dependencies that cause infinite loops
 
   // Real-time progress updates
   useEffect(() => {
@@ -210,7 +210,7 @@ export default function MultiplayerHost({ gameId, onGameEnd }: MultiplayerHostPr
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [gameId, onGameEnd, gameState.phase]); // Remove gameState.phase to prevent infinite loops
+  }, [gameId, onGameEnd, gameState.phase, supabase]); // Remove gameState.phase to prevent infinite loops
 
   // Timer countdown for host
   useEffect(() => {

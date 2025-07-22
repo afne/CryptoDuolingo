@@ -151,7 +151,7 @@ export default function NewsPage() {
           {/* Side News */}
           <div className="flex-1 flex flex-col gap-3">
             <h2 className="text-md font-bold text-blue-700 mb-2">Latest Updates</h2>
-            {newsArticles.slice(1).map((article, idx) => (
+            {newsArticles.slice(1).map((article) => (
               <Link
                 key={article.id}
                 href={`/news/${article.id}`}

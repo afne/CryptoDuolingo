@@ -96,64 +96,62 @@ export default function PricesPage() {
   });
 
   return (
-    <div>
+    <div className="bg-gray-50 min-h-screen overflow-x-hidden w-full">
       <NavBar />
-      <main className="ml-64 min-h-screen bg-gray-50 p-6">
-        <h1 className="text-3xl font-bold mb-6 text-blue-700">Cryptocurrency Prices by Market Cap</h1>
+      <main className="w-full max-w-4xl mx-auto px-2 sm:px-4 pt-16 sm:pt-20 pb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-blue-700 text-center">Cryptocurrency Prices by Market Cap</h1>
 
         {/* Market Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-          <div className={`bg-white p-4 rounded-xl shadow flex flex-col gap-2 transition-colors duration-300 ${marketCapFlash === 'flash-green' ? 'bg-green-50' : ''} ${marketCapFlash === 'flash-red' ? 'bg-red-50' : ''}`}>
-            <span className="text-sm text-gray-600">Market Cap</span>
-            <span className="text-2xl font-semibold text-red-500 transition-all duration-300">{formatCurrency(marketCap)}</span>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-6 w-full">
+          <div className={`bg-white p-4 sm:p-6 rounded-2xl shadow-lg flex flex-col gap-2 items-center sm:items-start transition-colors duration-300 ${marketCapFlash === 'flash-green' ? 'bg-green-50' : ''} ${marketCapFlash === 'flash-red' ? 'bg-red-50' : ''}`}>
+            <span className="text-xs sm:text-sm text-gray-600">Market Cap</span>
+            <span className="text-xl sm:text-2xl font-semibold text-red-500 transition-all duration-300">{formatCurrency(marketCap)}</span>
             <span className={`text-xs ${marketCapChange >= 0 ? 'text-green-400' : 'text-red-400'}`}>{marketCapChange >= 0 ? '▲' : '▼'} {marketCapChange.toFixed(2)}%</span>
           </div>
-          <div className={`bg-white p-4 rounded-xl shadow flex flex-col gap-2 transition-colors duration-300 ${volume24hFlash === 'flash-green' ? 'bg-green-50' : ''} ${volume24hFlash === 'flash-red' ? 'bg-red-50' : ''}`}>
-            <span className="text-sm text-gray-600">24h Trading Volume</span>
-            <span className="text-2xl font-semibold text-green-500 transition-all duration-300">{formatCurrency(volume24h)}</span>
+          <div className={`bg-white p-4 sm:p-6 rounded-2xl shadow-lg flex flex-col gap-2 items-center sm:items-start transition-colors duration-300 ${volume24hFlash === 'flash-green' ? 'bg-green-50' : ''} ${volume24hFlash === 'flash-red' ? 'bg-red-50' : ''}`}>
+            <span className="text-xs sm:text-sm text-gray-600">24h Trading Volume</span>
+            <span className="text-xl sm:text-2xl font-semibold text-green-500 transition-all duration-300">{formatCurrency(volume24h)}</span>
             <span className={`text-xs ${volume24hChange >= 0 ? 'text-green-400' : 'text-red-400'}`}>{volume24hChange >= 0 ? '▲' : '▼'} {volume24hChange.toFixed(2)}%</span>
           </div>
         </div>
 
         {/* Coin Table */}
-        <div className="overflow-x-auto">
-          <table className="min-w-full bg-white rounded-2xl shadow-xl text-sm text-black">
+        <div className="w-full overflow-x-auto rounded-2xl shadow-lg bg-white">
+          <table className="min-w-full text-xs sm:text-sm rounded-2xl">
             <thead className="bg-gray-100 text-black sticky top-0 z-10">
               <tr>
-                <th className="px-6 py-4 text-left text-xs font-extrabold text-black uppercase tracking-wider rounded-tl-2xl">#</th>
-                <th className="px-6 py-4 text-left text-xs font-extrabold text-black uppercase tracking-wider">Coin</th>
-                <th className="px-6 py-4 text-right text-xs font-extrabold text-black uppercase tracking-wider cursor-pointer" onClick={() => setSortKey('price')}>Price</th>
-                <th className="px-6 py-4 text-right text-xs font-extrabold text-black uppercase tracking-wider">1h</th>
-                <th className="px-6 py-4 text-right text-xs font-extrabold text-black uppercase tracking-wider">2h</th>
-                <th className="px-6 py-4 text-right text-xs font-extrabold text-black uppercase tracking-wider">7d</th>
-                <th className="px-6 py-4 text-right text-xs font-extrabold text-black uppercase tracking-wider">24h Volume</th>
-                <th className="px-6 py-4 text-right text-xs font-extrabold text-black uppercase tracking-wider rounded-tr-2xl">Market Cap</th>
+                <th className="px-2 sm:px-4 py-3 text-left text-[10px] sm:text-xs font-extrabold text-black uppercase tracking-wider rounded-tl-2xl">#</th>
+                <th className="px-2 sm:px-4 py-3 text-left text-[10px] sm:text-xs font-extrabold text-black uppercase tracking-wider">Coin</th>
+                <th className="px-2 sm:px-4 py-3 text-right text-[10px] sm:text-xs font-extrabold text-black uppercase tracking-wider cursor-pointer" onClick={() => setSortKey('price')}>Price</th>
+                <th className="px-2 sm:px-4 py-3 text-right text-[10px] sm:text-xs font-extrabold text-black uppercase tracking-wider">1h</th>
+                <th className="px-2 sm:px-4 py-3 text-right text-[10px] sm:text-xs font-extrabold text-black uppercase tracking-wider">2h</th>
+                <th className="px-2 sm:px-4 py-3 text-right text-[10px] sm:text-xs font-extrabold text-black uppercase tracking-wider">7d</th>
+                <th className="px-2 sm:px-4 py-3 text-right text-[10px] sm:text-xs font-extrabold text-black uppercase tracking-wider">24h Volume</th>
+                <th className="px-2 sm:px-4 py-3 text-right text-[10px] sm:text-xs font-extrabold text-black uppercase tracking-wider rounded-tr-2xl">Market Cap</th>
               </tr>
             </thead>
             <tbody className="text-black">
               {sortedCoins.map((coin, idx) => (
                 <tr
                   key={coin.symbol}
-                  className={
-                    `border-t text-black transition hover:bg-blue-50/60 ${idx === 0 ? 'font-semibold' : ''}`
-                  }
+                  className={`border-t text-black transition hover:bg-blue-50/60 ${idx === 0 ? 'font-semibold' : ''}`}
                   style={{ boxShadow: idx % 2 === 0 ? '0 1px 0 0 #f3f4f6' : undefined }}
                 >
-                  <td className="px-6 py-4 align-middle">{idx + 1}</td>
-                  <td className="px-6 py-4 flex items-center gap-3 align-middle">
-                    <Image src={coin.logo || "/default-logo.png"} alt={coin.name} width={24} height={24} />
+                  <td className="px-2 sm:px-4 py-3 align-middle">{idx + 1}</td>
+                  <td className="px-2 sm:px-4 py-3 flex items-center gap-2 sm:gap-3 align-middle">
+                    <Image src={coin.logo || "/default-logo.png"} alt={coin.name} width={24} height={24} className="rounded-full border" />
                     <div>
-                      <div className="font-bold text-black">{coin.name}</div>
-                      <div className="text-xs text-gray-500">{coin.symbol}</div>
+                      <div className="font-bold text-black text-xs sm:text-sm">{coin.name}</div>
+                      <div className="text-[10px] sm:text-xs text-gray-500">{coin.symbol}</div>
                     </div>
-                    <button className="ml-3 px-2 py-1 text-xs bg-green-100 text-green-700 rounded">Buy</button>
+                    <button className="ml-2 sm:ml-3 px-2 py-1 text-[10px] sm:text-xs bg-green-100 text-green-700 rounded">Buy</button>
                   </td>
-                  <td className="px-6 py-4 text-right align-middle font-mono">{formatCurrency(coin.price)}</td>
-                  <td className={`px-6 py-4 text-right align-middle font-mono ${coin.change1h >= 0 ? 'text-green-600' : 'text-red-600'}`}>{coin.change1h >= 0 ? '▲' : '▼'} {Math.abs(coin.change1h)}%</td>
-                  <td className={`px-6 py-4 text-right align-middle font-mono ${coin.change2h >= 0 ? 'text-green-600' : 'text-red-600'}`}>{coin.change2h >= 0 ? '▲' : '▼'} {Math.abs(coin.change2h)}%</td>
-                  <td className={`px-6 py-4 text-right align-middle font-mono ${coin.change7d >= 0 ? 'text-green-600' : 'text-red-600'}`}>{coin.change7d >= 0 ? '▲' : '▼'} {Math.abs(coin.change7d)}%</td>
-                  <td className="px-6 py-4 text-right align-middle font-mono">{formatCurrency(coin.volume24h)}</td>
-                  <td className="px-6 py-4 text-right align-middle font-mono">{formatCurrency(coin.marketCap)}</td>
+                  <td className="px-2 sm:px-4 py-3 text-right align-middle font-mono">{formatCurrency(coin.price)}</td>
+                  <td className={`px-2 sm:px-4 py-3 text-right align-middle font-mono ${coin.change1h >= 0 ? 'text-green-600' : 'text-red-600'}`}>{coin.change1h >= 0 ? '▲' : '▼'} {Math.abs(coin.change1h)}%</td>
+                  <td className={`px-2 sm:px-4 py-3 text-right align-middle font-mono ${coin.change2h >= 0 ? 'text-green-600' : 'text-red-600'}`}>{coin.change2h >= 0 ? '▲' : '▼'} {Math.abs(coin.change2h)}%</td>
+                  <td className={`px-2 sm:px-4 py-3 text-right align-middle font-mono ${coin.change7d >= 0 ? 'text-green-600' : 'text-red-600'}`}>{coin.change7d >= 0 ? '▲' : '▼'} {Math.abs(coin.change7d)}%</td>
+                  <td className="px-2 sm:px-4 py-3 text-right align-middle font-mono">{formatCurrency(coin.volume24h)}</td>
+                  <td className="px-2 sm:px-4 py-3 text-right align-middle font-mono">{formatCurrency(coin.marketCap)}</td>
                 </tr>
               ))}
             </tbody>

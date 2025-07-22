@@ -132,7 +132,7 @@ export default function CryptoPathPage() {
   ];
 
   return (
-    <div>
+    <div className="overflow-x-hidden w-full min-h-screen bg-white">
       <NavBar />
       {/* Guest Greeting Popup */}
       {showGuestPopup && (
@@ -156,15 +156,15 @@ export default function CryptoPathPage() {
           </div>
         </div>
       )}
-      <main className="ml-64 min-h-screen flex bg-white">
+      <main className="flex flex-col md:flex-row min-h-screen bg-white w-full max-w-full overflow-x-hidden">
         {/* Left Column - Banner and Quiz Path */}
-        <div className="flex-1 flex flex-col items-center px-4 py-12">
+        <div className="flex-1 flex flex-col items-center px-2 sm:px-4 py-8 md:py-12 w-full max-w-full overflow-x-hidden">
           {loading ? (
             <p className="text-2xl text-blue-500">Loading...</p>
           ) : (
             <div className="flex flex-col items-center w-full max-w-2xl">
               {/* Section Header */}
-              <div className="bg-[#7CD35E] text-white rounded-2xl px-6 py-6 mb-10 shadow flex items-center justify-between w-full max-w-screen-2xl min-h-[80px] relative">
+              <div className="bg-[#7CD35E] text-white rounded-2xl px-2 sm:px-6 py-6 mb-10 shadow flex flex-col sm:flex-row items-center sm:justify-between w-full max-w-full min-h-[80px] relative overflow-x-auto">
                 {/* Left Arrow + Section Info */}
                 <div className="flex items-center gap-4">
                   <span className="text-white text-3xl">←</span>
@@ -246,7 +246,7 @@ export default function CryptoPathPage() {
         </div>
 
         {/* Right Column - Quests */}
-        <div className="w-[600px] bg-white border-l border-gray-200 p-8">
+        <div className="w-full md:w-[400px] lg:w-[600px] bg-white border-t md:border-t-0 md:border-l border-gray-200 p-4 md:p-8 max-w-full overflow-x-hidden overflow-y-auto" style={{maxHeight: '100vh'}}>
           <h2 className="text-2xl font-bold text-black mb-4">Quests</h2>
           <div className="flex flex-col gap-6">
             {quests.map(quest => (

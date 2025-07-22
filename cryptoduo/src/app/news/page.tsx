@@ -118,29 +118,29 @@ const newsArticles = [
 
 export default function NewsPage() {
   return (
-    <div className="bg-white min-h-screen">
+    <div className="bg-white min-h-screen overflow-x-hidden w-full">
       <NavBar />
-      <main className="ml-64 max-w-7xl mx-auto p-6">
+      <main className="w-full max-w-4xl mx-auto px-2 sm:px-4 py-6">
         <h1 className="text-3xl font-bold text-gray-900 mb-6">Latest Crypto News</h1>
 
-        {/* Featured Article */}
-        <div className="flex flex-col lg:flex-row gap-6 mb-10">
-          <div className="flex-1">
+        {/* Featured Article and Side News */}
+        <div className="flex flex-col lg:flex-row gap-6 mb-10 w-full">
+          <div className="flex-1 min-w-0">
             <h2 className="text-lg font-bold text-blue-700 mb-2">Featured News</h2>
             <Image
               src="/btc_non_hover.png"
               alt="Featured News Hero"
               width={600}
               height={400}
-              className="w-full h-80 md:h-96 object-cover rounded-2xl shadow mb-4"
+              className="w-full h-48 sm:h-80 md:h-96 object-cover rounded-2xl shadow mb-4"
             />
-            <Link href={`/news/${newsArticles[0].id}`} className="flex items-center gap-4 group hover:bg-blue-50 rounded-xl p-2 transition">
-              <span className="text-6xl lg:text-7xl">{newsArticles[0].thumbnail}</span>
-              <div>
-                <h2 className="text-xl font-bold text-gray-900 group-hover:text-blue-700">
+            <Link href={`/news/${newsArticles[0].id}`} className="flex items-center gap-4 group hover:bg-blue-50 rounded-xl p-2 transition w-full">
+              <span className="text-5xl sm:text-6xl lg:text-7xl">{newsArticles[0].thumbnail}</span>
+              <div className="min-w-0">
+                <h2 className="text-lg sm:text-xl font-bold text-gray-900 group-hover:text-blue-700 truncate">
                   {newsArticles[0].title}
                 </h2>
-                <p className="text-gray-600 mt-2 text-sm">
+                <p className="text-gray-600 mt-2 text-sm truncate">
                   {newsArticles[0].summary}
                 </p>
                 <div className="text-xs text-gray-400 mt-1">{newsArticles[0].source} • {newsArticles[0].date}</div>
@@ -149,15 +149,15 @@ export default function NewsPage() {
           </div>
 
           {/* Side News */}
-          <div className="flex-1 flex flex-col gap-3">
+          <div className="flex-1 flex flex-col gap-3 min-w-0">
             <h2 className="text-md font-bold text-blue-700 mb-2">Latest Updates</h2>
             {newsArticles.slice(1).map((article) => (
               <Link
                 key={article.id}
                 href={`/news/${article.id}`}
-                className={`flex items-center gap-3 p-3 rounded-lg transition cursor-pointer group bg-white shadow-sm hover:shadow-md hover:bg-blue-50`}
+                className="flex items-center gap-3 p-3 rounded-lg transition cursor-pointer group bg-white shadow-sm hover:shadow-md hover:bg-blue-50 w-full"
               >
-                <span className="text-3xl flex items-center justify-center h-12 w-12 bg-gray-100 rounded-full">{article.thumbnail}</span>
+                <span className="text-2xl sm:text-3xl flex items-center justify-center h-10 w-10 sm:h-12 sm:w-12 bg-gray-100 rounded-full">{article.thumbnail}</span>
                 <div className="flex-1 min-w-0">
                   <h3 className="text-base font-semibold text-gray-900 truncate group-hover:text-blue-700 transition">
                     {article.title}

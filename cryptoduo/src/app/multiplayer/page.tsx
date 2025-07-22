@@ -76,7 +76,7 @@ export default function MultiplayerPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50">
       <NavBar />
-      <main className="ml-64 flex flex-col items-center justify-center min-h-screen p-8">
+      <main className="md:ml-64 flex flex-col items-center justify-center min-h-screen p-8">
         <div className="w-full max-w-xl mx-auto bg-white rounded-3xl shadow-xl p-8 flex flex-col items-center gap-8">
           {!user && <div className="text-xl text-blue-600">Loading user...</div>}
           {!quizStarted && !showLeaderboard && (

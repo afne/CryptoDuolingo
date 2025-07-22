@@ -3,12 +3,14 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '../utils/supabase/server';
+import { FaBars } from 'react-icons/fa';
 
 export default function Home() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [currentCrypto, setCurrentCrypto] = useState(0);
   const [scrollY, setScrollY] = useState(0);
   const router = useRouter();
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   useEffect(() => {
     const supabase = createClient();
@@ -87,13 +89,25 @@ export default function Home() {
               <span className="text-3xl">💹</span>
               <span className="text-2xl font-bold">DeCrypto</span>
             </div>
-            <div className="flex space-x-6">
-              <a href="/auth" className="text-gray-300 hover:text-white px-4 py-2 transition-colors">Sign In</a>
+            {/* Desktop nav */}
+            <div className="hidden sm:flex space-x-6">
               <a href="/auth" className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg font-medium transition-colors">
                 Get Started
               </a>
             </div>
+            {/* Hamburger for mobile */}
+            <button className="sm:hidden text-2xl text-white" onClick={() => setMobileNavOpen(!mobileNavOpen)}>
+              <FaBars />
+            </button>
           </nav>
+          {/* Mobile dropdown */}
+          {mobileNavOpen && (
+            <div className="sm:hidden absolute right-8 top-20 bg-white rounded-xl shadow-lg py-4 px-6 z-50 flex flex-col items-end">
+              <a href="/auth" className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg font-medium text-white transition-colors mb-2 w-full text-center">
+                Get Started
+              </a>
+            </div>
+          )}
 
           {/* Hero Content */}
           <div className="relative z-10 max-w-7xl mx-auto px-8 py-12 text-center">
@@ -109,9 +123,6 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
               <a href="/auth" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-xl text-lg transition-all duration-200 transform hover:scale-105 shadow-lg">
                 🚀 Start Learning
-              </a>
-              <a href="/auth" className="bg-gray-800/60 hover:bg-gray-700/70 text-white font-bold py-3 px-6 rounded-xl text-lg border border-gray-600/30 transition-all duration-200 backdrop-blur-sm">
-                🔑 Sign Up Free
               </a>
             </div>
 

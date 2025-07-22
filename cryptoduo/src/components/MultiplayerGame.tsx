@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 interface Question {
   id: number;
@@ -87,7 +87,7 @@ export default function MultiplayerGame({ userId, onGameEnd }: MultiplayerGamePr
   const [timeLeft, setTimeLeft] = useState(QUESTION_TIME);
   const [quizEnded, setQuizEnded] = useState(false);
 
-  const handleAnswer = (answerIdx: number | null) => {
+  const handleAnswer = useCallback((answerIdx: number | null) => {
     if (quizEnded) return;
     const question = cryptoQuestions[currentQuestion];
     if (answerIdx !== null && answerIdx === question.correctAnswer) {
@@ -104,7 +104,7 @@ export default function MultiplayerGame({ userId, onGameEnd }: MultiplayerGamePr
         setQuizEnded(true);
       }
     }, 1200);
-  };
+  }, [quizEnded, currentQuestion]);
 
   useEffect(() => {
     if (timeLeft > 0 && !quizEnded) {

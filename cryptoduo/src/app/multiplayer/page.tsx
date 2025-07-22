@@ -1,9 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import NavBar from "../../components/NavBar";
 import MultiplayerGame from "../../components/MultiplayerGame";
-import MultiplayerHost from "../../components/MultiplayerHost";
 import { createClient } from "../../utils/supabase/server";
 
 // Types
@@ -31,21 +29,12 @@ interface Player {
 }
 
 export default function MultiplayerPage() {
-  const router = useRouter();
   const [user, setUser] = useState<{ id: string; email?: string } | null>(null);
   const [game, setGame] = useState<Game | null>(null);
-  const [players, setPlayers] = useState<Player[]>([]);
-  const [joinCode, setJoinCode] = useState("");
-  const [joinError, setJoinError] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [fetchPlayersFn, setFetchPlayersFn] = useState<(() => void) | null>(null);
-  const [showExitConfirmation, setShowExitConfirmation] = useState(false);
   // Leaderboard state
   const [quizStarted, setQuizStarted] = useState(false);
   const [showLeaderboard, setShowLeaderboard] = useState(false);
-  const [leaderboard, setLeaderboard] = useState<any[]>([]);
-
-  const log = (...args: unknown[]) => { if (typeof window !== 'undefined') console.log(...args); };
+  const [leaderboard, setLeaderboard] = useState<{ name: string; score: number; created_at: string }[]>([]);
 
   useEffect(() => {
     const supabase = createClient();
@@ -64,181 +53,6 @@ export default function MultiplayerPage() {
     });
   }, []);
 
-  const removeStalePlayerEntry = async (supabase: any, userId: string) => {
-    const { data: playerEntry } = await supabase
-      .from("game_players")
-      .select("*")
-      .eq("user_id", userId)
-      .maybeSingle();
-
-    if (playerEntry) {
-      const { data: stillValidGame } = await supabase
-        .from("games")
-        .select("id")
-        .eq("id", playerEntry.game_id)
-        .maybeSingle();
-
-      if (!stillValidGame) {
-        await supabase.from("game_players").delete().eq("user_id", userId);
-      }
-    }
-  };
-
-  // Move handleExit out and rename to handleExitGame
-  const handleExitGame = async () => {
-    const supabase = createClient();
-    if (!user || !game) return;
-
-    try {
-      if (user.id === game.created_by) {
-        await supabase.from("game_players").delete().eq("game_id", game.id);
-        await supabase.from("games").delete().eq("id", game.id);
-      } else {
-        await supabase.from("game_players").delete().match({ user_id: user.id, game_id: game.id });
-      }
-    } catch (err) {
-      console.error("Error during exit (unload):", err);
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener("beforeunload", handleExitGame);
-    return () => {
-      handleExitGame();
-      window.removeEventListener("beforeunload", handleExitGame);
-    };
-  }, [user, game]);
-
-  useEffect(() => {
-    const handleRouteChange = () => {
-      handleExitGame();
-    };
-
-    // Remove router.events usage since AppRouterInstance does not have events
-    // Instead, you may need to use a different approach for route change cleanup in Next.js App Router
-    // For now, comment out the following lines to avoid errors
-    // router.events?.on("routeChangeStart", handleRouteChange);
-    // return () => {
-    //   router.events?.off("routeChangeStart", handleRouteChange);
-    // };
-    // If you want to handle route changes, consider using useRouter's hooks or context
-  }, [user, game]);
-
-  const handleStartGame = async () => {
-    if (!user) return;
-    setLoading(true);
-    const supabase = createClient();
-
-    await removeStalePlayerEntry(supabase, user.id);
-
-    const { data: existing } = await supabase
-      .from("game_players")
-      .select("*")
-      .eq("user_id", user.id)
-      .maybeSingle();
-    if (existing) {
-      setJoinError("You are already in a game. Exit first.");
-      setLoading(false);
-      return;
-    }
-
-    let code = "";
-    let tries = 0;
-    while (tries < 5) {
-      code = Math.floor(100000 + Math.random() * 900000).toString();
-      const { data: exists } = await supabase.from("games").select("*").eq("code", code).maybeSingle();
-      if (!exists) break;
-      tries++;
-    }
-    if (!code) {
-      setJoinError("Failed to generate unique code.");
-      setLoading(false);
-      return;
-    }
-
-    const { data: newGame, error: gameError } = await supabase
-      .from("games")
-      .insert({ code, created_by: user.id })
-      .select()
-      .maybeSingle();
-    if (gameError || !newGame) {
-      setJoinError("Failed to create game.");
-      setLoading(false);
-      return;
-    }
-
-    await supabase.from("game_players").insert({ game_id: newGame.id, user_id: user.id });
-    setGame(newGame);
-    setLoading(false);
-    setJoinError("");
-  };
-
-  const handleJoinGame = async () => {
-    if (!user) return;
-    setLoading(true);
-    setJoinError("");
-    const supabase = createClient();
-
-    await removeStalePlayerEntry(supabase, user.id);
-
-    const { data: existing } = await supabase
-      .from("game_players")
-      .select("*")
-      .eq("user_id", user.id)
-      .maybeSingle();
-    if (existing) {
-      setJoinError("You are already in a game. Exit first.");
-      setLoading(false);
-      return;
-    }
-
-    const { data: foundGame } = await supabase
-      .from("games")
-      .select("*")
-      .eq("code", joinCode)
-      .eq("started", false)
-      .maybeSingle();
-    if (!foundGame) {
-      setJoinError("Game not found or already started.");
-      setLoading(false);
-      return;
-    }
-
-    const { error: insertError } = await supabase.from("game_players").insert({ game_id: foundGame.id, user_id: user.id });
-    if (insertError) {
-      setJoinError("Failed to join game.");
-      setLoading(false);
-      return;
-    }
-    setGame(foundGame);
-    setLoading(false);
-  };
-
-  // Helper to determine if user is host
-  const isHost = user && game && user.id === game.created_by;
-
-  // Leave game handler
-  const handleLeaveGame = async () => {
-    if (!user || !game) return;
-    setLoading(true);
-    const supabase = createClient();
-    try {
-      if (isHost) {
-        await supabase.from("game_players").delete().eq("game_id", game.id);
-        await supabase.from("games").delete().eq("id", game.id);
-      } else {
-        await supabase.from("game_players").delete().match({ user_id: user.id, game_id: game.id });
-      }
-      setGame(null);
-      setPlayers([]);
-      setJoinCode("");
-      setJoinError("");
-    } catch (err) {
-      setJoinError("Failed to leave game.");
-    }
-    setLoading(false);
-  };
-
   // Fetch leaderboard (top 10 scores)
   const fetchLeaderboard = async () => {
     const supabase = createClient();
@@ -253,22 +67,13 @@ export default function MultiplayerPage() {
 
   // Game end callback for MultiplayerGame
   const handleGameEnd = async () => {
-    let name = user?.email || 'Guest';
-    let score = Number(localStorage.getItem('mp_points') || '0');
+    const name = user?.email || 'Guest';
+    const score = Number(localStorage.getItem('mp_points') || '0');
     // Insert score into Supabase leaderboard table
     const supabase = createClient();
     await supabase.from('leaderboard').insert({ name, score, created_at: new Date().toISOString() });
     // Fetch top scores for leaderboard
     await fetchLeaderboard();
-  };
-
-  // Allow player to start quiz
-  const handlePlayerStartQuiz = () => {
-    if (!game) return;
-    // Set game phase to 'quiz' in DB
-    const supabase = createClient();
-    supabase.from('games').update({ phase: 'quiz', started: true }).eq('id', game.id);
-    setGame({ ...game, phase: 'quiz', started: true });
   };
 
   // Poll leaderboard for live updates
@@ -286,7 +91,7 @@ export default function MultiplayerPage() {
   // Improve score handler
   const handleImproveScore = async () => {
     const supabase = createClient();
-    let name = user?.email || 'Guest';
+    const name = user?.email || 'Guest';
     // Remove old score (delete all for this name)
     await supabase.from('leaderboard').delete().eq('name', name);
     setShowLeaderboard(false);

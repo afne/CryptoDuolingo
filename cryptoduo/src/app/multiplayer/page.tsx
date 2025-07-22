@@ -15,22 +15,9 @@ interface Game {
   is_answer_revealed?: boolean;
   question_start_time?: string;
 }
-interface Player {
-  id: string;
-  user_id: string;
-  game_id: string;
-  joined_at: string;
-  user_email?: string;
-  user_profile?: {
-    first_name: string;
-    last_name: string;
-    experience_level: string;
-  };
-}
 
 export default function MultiplayerPage() {
   const [user, setUser] = useState<{ id: string; email?: string } | null>(null);
-  const [game, setGame] = useState<Game | null>(null);
   // Leaderboard state
   const [quizStarted, setQuizStarted] = useState(false);
   const [showLeaderboard, setShowLeaderboard] = useState(false);

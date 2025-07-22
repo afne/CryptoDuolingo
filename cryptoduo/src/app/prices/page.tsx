@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import NavBar from "@/components/NavBar";
+import Image from "next/image";
 
 // --- Coin Data ---
 interface CoinData {
@@ -141,7 +142,7 @@ export default function PricesPage() {
                 >
                   <td className="px-6 py-4 align-middle">{idx + 1}</td>
                   <td className="px-6 py-4 flex items-center gap-3 align-middle">
-                    <img src={coin.logo || "/default-logo.png"} alt={coin.name} className="w-6 h-6" />
+                    <Image src={coin.logo || "/default-logo.png"} alt={coin.name} width={24} height={24} />
                     <div>
                       <div className="font-bold text-black">{coin.name}</div>
                       <div className="text-xs text-gray-500">{coin.symbol}</div>

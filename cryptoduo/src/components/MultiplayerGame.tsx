@@ -1,33 +1,12 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
-import { createClient } from "../utils/supabase/server";
+import { useState, useEffect } from "react";
 
 interface Question {
   id: number;
   question: string;
   options: string[];
   correctAnswer: number;
-}
-
-interface PlayerProgress {
-  user_id: string;
-  current_question: number;
-  score: number;
-  completed: boolean;
-  user_profile?: {
-    first_name: string;
-    last_name: string;
-    experience_level: string;
-  };
-}
-
-interface GameState {
-  phase: 'lobby' | 'quiz' | 'result';
-  current_question_sequence: number;
-  is_answer_revealed: boolean;
-  question_start_time?: number;
-  choices_shown?: boolean;
 }
 
 interface MultiplayerGameProps {

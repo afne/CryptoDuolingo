@@ -1,6 +1,7 @@
 "use client";
 import NavBar from "@/components/NavBar";
 import Link from "next/link";
+import Image from "next/image";
 
 const newsArticles = [
   {
@@ -126,9 +127,11 @@ export default function NewsPage() {
         <div className="flex flex-col lg:flex-row gap-6 mb-10">
           <div className="flex-1">
             <h2 className="text-lg font-bold text-blue-700 mb-2">Featured News</h2>
-            <img
+            <Image
               src="/btc_non_hover.png"
               alt="Featured News Hero"
+              width={600}
+              height={400}
               className="w-full h-80 md:h-96 object-cover rounded-2xl shadow mb-4"
             />
             <Link href={`/news/${newsArticles[0].id}`} className="flex items-center gap-4 group hover:bg-blue-50 rounded-xl p-2 transition">

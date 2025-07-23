@@ -9,8 +9,8 @@ export default function MultiplayerPage() {
   // Leaderboard state
   const [quizStarted, setQuizStarted] = useState(false);
   const [showLeaderboard, setShowLeaderboard] = useState(false);
-  const [leaderboard, setLeaderboard] = useState<{ name: string; score: number; created_at: string }[]>([]);
-  const [userScore, setUserScore] = useState<{ name: string; score: number; created_at: string, rank?: number } | null>(null);
+  const [leaderboard, setLeaderboard] = useState<{ name: string; score: number; created_at: string; countrycode?: string }[]>([]);
+  const [userScore, setUserScore] = useState<{ name: string; score: number; created_at: string; countrycode?: string; rank?: number } | null>(null);
 
   useEffect(() => {
     const supabase = createClient();
@@ -34,7 +34,7 @@ export default function MultiplayerPage() {
     const supabase = createClient();
     const { data: topScores } = await supabase
       .from('leaderboard')
-      .select('name, score, created_at')
+      .select('name, score, created_at, countrycode')
       .order('score', { ascending: false })
       .limit(10);
     setLeaderboard(topScores || []);
@@ -44,7 +44,7 @@ export default function MultiplayerPage() {
       // Get user's best score and their rank
       const { data: userEntry } = await supabase
         .from('leaderboard')
-        .select('name, score, created_at')
+        .select('name, score, created_at, countrycode')
         .eq('name', name)
         .order('score', { ascending: false })
         .limit(1)
@@ -69,9 +69,10 @@ export default function MultiplayerPage() {
   const handleGameEnd = async () => {
     const name = user?.email || 'Guest';
     const score = Number(localStorage.getItem('mp_points') || '0');
+    const countrycode = localStorage.getItem('countryCode') || '';
     // Insert score into Supabase leaderboard table
     const supabase = createClient();
-    await supabase.from('leaderboard').insert({ name, score, created_at: new Date().toISOString() });
+    await supabase.from('leaderboard').insert({ name, score, created_at: new Date().toISOString(), countrycode });
     // Fetch top scores for leaderboard
     await fetchLeaderboard();
   };
@@ -106,6 +107,14 @@ export default function MultiplayerPage() {
       minute: '2-digit',
       hour12: false
     });
+  }
+
+  // Add a helper to map country codes to flag emojis
+  const countryFlags: { [key: string]: string } = {
+    AF: '🇦🇫', AL: '🇦🇱', DZ: '🇩🇿', AS: '🇦🇸', AD: '🇦🇩', AO: '🇦🇴', AI: '🇦🇮', AQ: '🇦🇶', AG: '🇦🇬', AR: '🇦🇷', AM: '🇦🇲', AW: '🇦🇼', AU: '🇦🇺', AT: '🇦🇹', AZ: '🇦🇿', BS: '🇧🇸', BH: '🇧🇭', BD: '🇧🇩', BB: '🇧🇧', BY: '🇧🇾', BE: '🇧🇪', BZ: '🇧🇿', BJ: '🇧🇯', BM: '🇧🇲', BT: '🇧🇹', BO: '🇧🇴', BQ: '🇧🇶', BA: '🇧🇦', BW: '🇧🇼', BV: '🇧🇻', BR: '🇧🇷', IO: '🇮🇴', BN: '🇧🇳', BG: '🇧🇬', BF: '🇧🇫', BI: '🇧🇮', CV: '🇨🇻', KH: '🇰🇭', CM: '🇨🇲', CA: '🇨🇦', KY: '🇰🇾', CF: '🇨🇫', TD: '🇹🇩', CL: '🇨🇱', CN: '🇨🇳', CX: '🇨🇽', CC: '🇨🇨', CO: '🇨🇴', KM: '🇰🇲', CG: '🇨🇬', CD: '🇨🇩', CK: '🇨🇰', CR: '🇨🇷', CI: '🇨🇮', HR: '🇭🇷', CU: '🇨🇺', CW: '🇨🇼', CY: '🇨🇾', CZ: '🇨🇿', DK: '🇩🇰', DJ: '🇩🇯', DM: '🇩🇲', DO: '🇩🇴', EC: '🇪🇨', EG: '🇪🇬', SV: '🇸🇻', GQ: '🇬🇶', ER: '🇪🇷', EE: '🇪🇪', SZ: '🇸🇿', ET: '🇪🇹', FK: '🇫🇰', FO: '🇫🇴', FJ: '🇫🇯', FI: '🇫🇮', FR: '🇫🇷', GF: '🇬🇫', PF: '🇵🇫', TF: '🇹🇫', GA: '🇬🇦', GM: '🇬🇲', GE: '🇬🇪', DE: '🇩🇪', GH: '🇬🇭', GI: '🇬🇮', GR: '🇬🇷', GL: '🇬🇱', GD: '🇬🇩', GP: '🇬🇵', GU: '🇬🇺', GT: '🇬🇹', GG: '🇬🇬', GN: '🇬🇳', GW: '🇬🇼', GY: '🇬🇾', HT: '🇭🇹', HM: '🇭🇲', VA: '🇻🇦', HN: '🇭🇳', HK: '🇭🇰', HU: '🇭🇺', IS: '🇮🇸', IN: '🇮🇳', ID: '🇮🇩', IR: '🇮🇷', IQ: '🇮🇶', IE: '🇮🇪', IM: '🇮🇲', IL: '🇮🇱', IT: '🇮🇹', JM: '🇯🇲', JP: '🇯🇵', JE: '🇯🇪', JO: '🇯🇴', KZ: '🇰🇿', KE: '🇰🇪', KI: '🇰🇮', KP: '🇰🇵', KR: '🇰🇷', KW: '🇰🇼', KG: '🇰🇬', LA: '🇱🇦', LV: '🇱🇻', LB: '🇱🇧', LS: '🇱🇸', LR: '🇱🇷', LY: '🇱🇾', LI: '🇱🇮', LT: '🇱🇹', LU: '🇱🇺', MO: '🇲🇴', MG: '🇲🇬', MW: '🇲🇼', MY: '🇲🇾', MV: '🇲🇻', ML: '🇲🇱', MT: '🇲🇹', MH: '🇲🇭', MQ: '🇲🇶', MR: '🇲🇷', MU: '🇲🇺', YT: '🇾🇹', MX: '🇲🇽', FM: '🇫🇲', MD: '🇲🇩', MC: '🇲🇨', MN: '🇲🇳', ME: '🇲🇪', MS: '🇲🇸', MA: '🇲🇦', MZ: '🇲🇿', MM: '🇲🇲', NA: '🇳🇦', NR: '🇳🇷', NP: '🇳🇵', NL: '🇳🇱', NC: '🇳🇨', NZ: '🇳🇿', NI: '🇳🇮', NE: '🇳🇪', NG: '🇳🇬', NU: '🇳🇺', NF: '🇳🇫', MK: '🇲🇰', MP: '🇲🇵', NO: '🇳🇴', OM: '🇴🇲', PK: '🇵🇰', PW: '🇵🇼', PS: '🇵🇸', PA: '🇵🇦', PG: '🇵🇬', PY: '🇵🇾', PE: '🇵🇪', PH: '🇵🇭', PN: '🇵🇳', PL: '🇵🇱', PT: '🇵🇹', PR: '🇵🇷', QA: '🇶🇦', RE: '🇷🇪', RO: '🇷🇴', RU: '🇷🇺', RW: '🇷🇼', BL: '🇧🇱', SH: '🇸🇭', KN: '🇰🇳', LC: '🇱🇨', MF: '🇲🇫', PM: '🇵🇲', VC: '🇻🇨', WS: '🇼🇸', SM: '🇸🇲', ST: '🇸🇹', SA: '🇸🇦', SN: '🇸🇳', RS: '🇷🇸', SC: '🇸🇨', SL: '🇸🇱', SG: '🇸🇬', SX: '🇸🇽', SK: '🇸🇰', SI: '🇸🇮', SB: '🇸🇧', SO: '🇸🇴', ZA: '🇿🇦', GS: '🇬🇸', SS: '🇸🇸', ES: '🇪🇸', LK: '🇱🇰', SD: '🇸🇩', SR: '🇸🇷', SJ: '🇸🇯', SE: '🇸🇪', CH: '🇨🇭', SY: '🇸🇾', TW: '🇹🇼', TJ: '🇹🇯', TZ: '🇹🇿', TH: '🇹🇭', TL: '🇹🇱', TG: '🇹🇬', TK: '🇹🇰', TO: '🇹🇴', TT: '🇹🇹', TN: '🇹🇳', TR: '🇹🇷', TM: '🇹🇲', TC: '🇹🇨', TV: '🇹🇻', UG: '🇺🇬', UA: '🇺🇦', AE: '🇦🇪', GB: '🇬🇧', US: '🇺🇸', UM: '🇺🇲', UY: '🇺🇾', UZ: '🇺🇿', VU: '🇻🇺', VE: '🇻🇪', VN: '🇻🇳', VG: '🇻🇬', VI: '🇻🇮', WF: '🇼🇫', EH: '🇪🇭', YE: '🇾🇪', ZM: '🇿🇲', ZW: '🇿🇼' };
+
+  function getFlag(code: string | undefined) {
+    return code ? (countryFlags[code] || '') : '';
   }
 
   return (
@@ -162,7 +171,7 @@ export default function MultiplayerPage() {
                         <td className="py-3 px-4 text-xl text-center">
                           {idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : idx + 1}
                         </td>
-                        <td className="py-3 px-4">{entry.name}</td>
+                        <td className="py-3 px-4">{entry.countrycode ? getFlag(entry.countrycode) : ''} {entry.name}</td>
                         <td className="py-3 px-4 font-mono">{entry.score}</td>
                         <td className="py-3 px-4 font-mono">{formatTime(entry.created_at)}</td>
                       </tr>
@@ -172,7 +181,7 @@ export default function MultiplayerPage() {
                         <tr><td colSpan={4} className="py-2 text-center text-gray-400 bg-transparent">...</td></tr>
                         <tr className="font-bold text-green-700 bg-green-50">
                           <td className="py-3 px-4 text-center">{userScore.rank || '—'}</td>
-                          <td className="py-3 px-4">{userScore.name} (You)</td>
+                          <td className="py-3 px-4">{userScore.countrycode ? getFlag(userScore.countrycode) : ''} {userScore.name} (You)</td>
                           <td className="py-3 px-4 font-mono">{userScore.score}</td>
                           <td className="py-3 px-4 font-mono">{formatTime(userScore.created_at)}</td>
                         </tr>

@@ -24,11 +24,10 @@ interface Lesson {
   order_index: number;
 }
 
-function isNewGuest() {
+function isGuest() {
   if (typeof window === 'undefined') return false;
   const firstName = localStorage.getItem('firstName');
-  const greeted = localStorage.getItem('greeted');
-  return !!firstName && !greeted;
+  return !!firstName;
 }
 
 export default function CryptoPathPage() {
@@ -43,9 +42,8 @@ export default function CryptoPathPage() {
     if (typeof window !== 'undefined') {
       const firstName = localStorage.getItem('firstName');
       setGuestName(firstName);
-      if (isNewGuest()) {
+      if (isGuest()) {
         setShowGuestPopup(true);
-        localStorage.setItem('greeted', 'true');
       }
     }
   }, []);

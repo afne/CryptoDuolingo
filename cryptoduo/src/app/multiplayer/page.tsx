@@ -10,6 +10,7 @@ export default function MultiplayerPage() {
   const [quizStarted, setQuizStarted] = useState(false);
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [leaderboard, setLeaderboard] = useState<{ name: string; score: number; created_at: string }[]>([]);
+  const [userScore, setUserScore] = useState<{ name: string; score: number; created_at: string } | null>(null);
 
   useEffect(() => {
     const supabase = createClient();
@@ -28,15 +29,29 @@ export default function MultiplayerPage() {
     });
   }, []);
 
-  // Fetch leaderboard (top 10 scores)
+  // Fetch leaderboard (top 10 scores + user's score if not in top 10)
   const fetchLeaderboard = async () => {
     const supabase = createClient();
-    const { data } = await supabase
+    const { data: topScores } = await supabase
       .from('leaderboard')
       .select('name, score, created_at')
       .order('score', { ascending: false })
       .limit(10);
-    setLeaderboard(data || []);
+    setLeaderboard(topScores || []);
+    // Fetch user's score if not in top 10
+    const name = user?.email || 'Guest';
+    if (topScores && !topScores.some(entry => entry.name === name)) {
+      const { data: userEntry } = await supabase
+        .from('leaderboard')
+        .select('name, score, created_at')
+        .eq('name', name)
+        .order('score', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      setUserScore(userEntry || null);
+    } else {
+      setUserScore(null);
+    }
     setShowLeaderboard(true);
   };
 
@@ -122,6 +137,16 @@ export default function MultiplayerPage() {
                         <td className="py-2 px-4">{new Date(entry.created_at).toLocaleString()}</td>
                       </tr>
                     ))}
+                    {userScore && (
+                      <>
+                        <tr><td colSpan={3} className="py-2 text-center text-gray-400">...</td></tr>
+                        <tr className="font-bold text-green-700">
+                          <td className="py-2 px-4">{userScore.name} (You)</td>
+                          <td className="py-2 px-4">{userScore.score}</td>
+                          <td className="py-2 px-4">{new Date(userScore.created_at).toLocaleString()}</td>
+                        </tr>
+                      </>
+                    )}
                   </tbody>
                 </table>
                 <div className="flex flex-col md:flex-row gap-4 mt-6">

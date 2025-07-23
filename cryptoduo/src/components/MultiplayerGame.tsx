@@ -77,7 +77,7 @@ const cryptoQuestions: Question[] = [
   }
 ];
 
-const QUESTION_TIME = 20; // seconds per question
+const QUESTION_TIME = 10; // seconds per question
 
 export default function MultiplayerGame({ userId, onGameEnd }: MultiplayerGameProps) {
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -86,16 +86,34 @@ export default function MultiplayerGame({ userId, onGameEnd }: MultiplayerGamePr
   const [correctCount, setCorrectCount] = useState(0);
   const [timeLeft, setTimeLeft] = useState(QUESTION_TIME);
   const [quizEnded, setQuizEnded] = useState(false);
+  const [lastPoints, setLastPoints] = useState<number | null>(null);
+  const [streak, setStreak] = useState(0);
+  const [multiplier, setMultiplier] = useState(1);
 
   const handleAnswer = useCallback((answerIdx: number | null) => {
     if (quizEnded) return;
     const question = cryptoQuestions[currentQuestion];
+    let points = 0;
+    let newStreak = streak;
+    let newMultiplier = multiplier;
     if (answerIdx !== null && answerIdx === question.correctAnswer) {
-      setScore(s => s + 10);
+      // Increase streak and multiplier
+      newStreak = streak + 1;
+      newMultiplier = 1 + newStreak * 0.2;
+      points = Math.max(0, Math.round((timeLeft / QUESTION_TIME) * 1000 * newMultiplier));
+      setScore(s => s + points);
       setCorrectCount(c => c + 1);
+      setStreak(newStreak);
+      setMultiplier(newMultiplier);
+    } else {
+      // Reset streak and multiplier
+      setStreak(0);
+      setMultiplier(1);
     }
+    setLastPoints(points);
     setSelectedAnswer(answerIdx);
     setTimeout(() => {
+      setLastPoints(null);
       if (currentQuestion < cryptoQuestions.length - 1) {
         setCurrentQuestion(q => q + 1);
         setSelectedAnswer(null);
@@ -104,7 +122,7 @@ export default function MultiplayerGame({ userId, onGameEnd }: MultiplayerGamePr
         setQuizEnded(true);
       }
     }, 1200);
-  }, [quizEnded, currentQuestion]);
+  }, [quizEnded, currentQuestion, timeLeft, streak, multiplier]);
 
   useEffect(() => {
     if (timeLeft > 0 && !quizEnded) {
@@ -127,7 +145,7 @@ export default function MultiplayerGame({ userId, onGameEnd }: MultiplayerGamePr
     // This ensures the array size/order is always the same
   }, [quizEnded, score, correctCount, onGameEnd, userId]);
 
-  if (quizEnded) {
+  if (quizEnded || currentQuestion >= cryptoQuestions.length) {
     return (
       <div className="flex flex-col items-center justify-center gap-6">
         <h2 className="text-3xl font-bold text-blue-700">Quiz Complete!</h2>
@@ -144,6 +162,7 @@ export default function MultiplayerGame({ userId, onGameEnd }: MultiplayerGamePr
       <div className="w-full flex justify-between items-center mb-2">
         <span className="text-lg font-bold text-blue-700">Question {currentQuestion + 1} / {cryptoQuestions.length}</span>
         <span className="text-lg font-bold text-green-600">{timeLeft}s</span>
+        <span className="ml-4 text-sm text-yellow-600 font-bold">Streak: {streak} | Multiplier: {multiplier.toFixed(1)}x</span>
       </div>
       <h2 className="text-2xl font-bold text-gray-900 text-center mb-4">{question.question}</h2>
       <div className="w-full flex flex-col gap-4">
@@ -164,7 +183,15 @@ export default function MultiplayerGame({ userId, onGameEnd }: MultiplayerGamePr
       </div>
       {selectedAnswer !== null && (
         <div className="mt-4 text-lg font-bold text-gray-700">
-          {selectedAnswer === question.correctAnswer ? 'Correct!' : 'Incorrect!'}
+          {selectedAnswer === question.correctAnswer ? (
+            <>
+              Correct!{' '}
+              <span className="text-green-600">+{lastPoints} points</span>
+              <span className="ml-2 text-yellow-600">(Streak: {streak}, {multiplier.toFixed(1)}x)</span>
+            </>
+          ) : (
+            'Incorrect!'
+          )}
         </div>
       )}
     </div>

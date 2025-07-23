@@ -10,7 +10,7 @@ export default function MultiplayerPage() {
   const [quizStarted, setQuizStarted] = useState(false);
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [leaderboard, setLeaderboard] = useState<{ name: string; score: number; created_at: string }[]>([]);
-  const [userScore, setUserScore] = useState<{ name: string; score: number; created_at: string } | null>(null);
+  const [userScore, setUserScore] = useState<{ name: string; score: number; created_at: string, rank?: number } | null>(null);
 
   useEffect(() => {
     const supabase = createClient();
@@ -38,9 +38,10 @@ export default function MultiplayerPage() {
       .order('score', { ascending: false })
       .limit(10);
     setLeaderboard(topScores || []);
-    // Fetch user's score if not in top 10
+    // Fetch user's score and rank if not in top 10
     const name = user?.email || 'Guest';
     if (topScores && !topScores.some(entry => entry.name === name)) {
+      // Get user's best score and their rank
       const { data: userEntry } = await supabase
         .from('leaderboard')
         .select('name, score, created_at')
@@ -48,7 +49,16 @@ export default function MultiplayerPage() {
         .order('score', { ascending: false })
         .limit(1)
         .maybeSingle();
-      setUserScore(userEntry || null);
+      if (userEntry) {
+        // Get user's rank
+        const { count } = await supabase
+          .from('leaderboard')
+          .select('*', { count: 'exact', head: true })
+          .gt('score', userEntry.score);
+        setUserScore({ ...userEntry, rank: (count || 0) + 1 });
+      } else {
+        setUserScore(null);
+      }
     } else {
       setUserScore(null);
     }
@@ -161,7 +171,7 @@ export default function MultiplayerPage() {
                       <>
                         <tr><td colSpan={4} className="py-2 text-center text-gray-400 bg-transparent">...</td></tr>
                         <tr className="font-bold text-green-700 bg-green-50">
-                          <td className="py-3 px-4 text-center">—</td>
+                          <td className="py-3 px-4 text-center">{userScore.rank || '—'}</td>
                           <td className="py-3 px-4">{userScore.name} (You)</td>
                           <td className="py-3 px-4 font-mono">{userScore.score}</td>
                           <td className="py-3 px-4 font-mono">{formatTime(userScore.created_at)}</td>

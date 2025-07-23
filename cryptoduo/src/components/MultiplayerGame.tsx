@@ -15,66 +15,187 @@ interface MultiplayerGameProps {
 }
 
 const cryptoQuestions: Question[] = [
+  // 1️⃣ Blockchain Basics
   {
     id: 1,
-    question: "What is Bitcoin's maximum supply?",
-    options: ["21 million", "100 million", "1 billion", "Unlimited"],
-    correctAnswer: 0
+    question: "What is a blockchain?",
+    options: [
+      "A centralized database",
+      "A linked list of transaction blocks",
+      "A type of cryptocurrency",
+      "A digital wallet"
+    ],
+    correctAnswer: 1
   },
+  // B. A blockchain is a decentralized, linked list of blocks containing transactions.
+
+  // 2️⃣ Public vs. Private Key
   {
     id: 2,
-    question: "Who is the creator of Bitcoin?",
-    options: ["Vitalik Buterin", "Satoshi Nakamoto", "Elon Musk", "Charlie Lee"],
+    question: "Which key should you keep secret?",
+    options: [
+      "Public key",
+      "Private key",
+      "Both keys",
+      "Neither key"
+    ],
     correctAnswer: 1
   },
+  // B. The private key must remain secret to authorize spending; the public key can be shared.
+
+  // 3️⃣ Crypto Wallet
   {
     id: 3,
-    question: "What does DeFi stand for?",
-    options: ["Decentralized Finance", "Definite Finance", "Defined Funds", "Digital Fiat"],
-    correctAnswer: 0
+    question: "What does a crypto wallet store?",
+    options: [
+      "Actual coins",
+      "Private keys",
+      "Exchange passwords",
+      "Transaction fees"
+    ],
+    correctAnswer: 1
   },
+  // B. Wallets store your private keys, which prove ownership of on‑chain assets.
+
+  // 4️⃣ Bitcoin Supply
   {
     id: 4,
-    question: "Which blockchain introduced smart contracts?",
-    options: ["Bitcoin", "Ethereum", "Dogecoin", "Litecoin"],
-    correctAnswer: 1
+    question: "What is the maximum supply of Bitcoin?",
+    options: [
+      "21 million",
+      "100 million",
+      "84 million",
+      "Unlimited"
+    ],
+    correctAnswer: 0
   },
+  // A. Bitcoin’s protocol caps total issuance at 21 million BTC.
+
+  // 5️⃣ Stablecoin Purpose
   {
     id: 5,
-    question: "What is the native token of the Solana blockchain?",
-    options: ["SOL", "ETH", "BTC", "ADA"],
-    correctAnswer: 0
+    question: "What is a “stablecoin” designed to do?",
+    options: [
+      "Increase volatility",
+      "Track the price of gold",
+      "Maintain a stable value",
+      "Mine new coins"
+    ],
+    correctAnswer: 2
   },
+  // C. Stablecoins aim to peg their value to an asset (e.g., USD) for price stability.
+
+  // 6️⃣ Smart Contract
   {
     id: 6,
-    question: "Which consensus mechanism does Bitcoin use?",
-    options: ["Proof of Stake", "Proof of Work", "Delegated Proof of Stake", "Proof of Authority"],
-    correctAnswer: 1
-  },
-  {
-    id: 7,
-    question: "What is a private key used for?",
-    options: ["To mine coins", "To sign transactions", "To view balances", "To create NFTs"],
-    correctAnswer: 1
-  },
-  {
-    id: 8,
-    question: "Which of these is a stablecoin?",
-    options: ["USDT", "BTC", "ETH", "SOL"],
+    question: "What is a smart contract?",
+    options: [
+      "A self‑executing contract on a blockchain",
+      "A traditional paper agreement",
+      "A type of hardware wallet",
+      "A centralized exchange order"
+    ],
     correctAnswer: 0
   },
+  // A. Smart contracts are code that automatically enforces terms on‑chain.
+
+  // 7️⃣ Mining
   {
-    id: 9,
-    question: "What is the main purpose of an NFT?",
-    options: ["Fungible currency", "Unique digital asset", "Mining", "Staking"],
+    id: 7,
+    question: "In proof‑of‑work systems, what does “mining” do?",
+    options: [
+      "Validates and adds new blocks",
+      "Prints physical coins",
+      "Sends transactions off‑chain",
+      "Creates smart contracts"
+    ],
+    correctAnswer: 0
+  },
+  // A. Miners solve cryptographic puzzles to validate transactions and add blocks.
+
+  // 8️⃣ Transaction Confirmation
+  {
+    id: 8,
+    question: "What confirms a crypto transaction on the network?",
+    options: [
+      "Wallet backup",
+      "Block validation",
+      "Email notification",
+      "API request"
+    ],
     correctAnswer: 1
   },
+  // B. Once a block containing your transaction is validated, it’s confirmed on‑chain.
+
+  // 9️⃣ Coin vs. Token
+  {
+    id: 9,
+    question: "What’s the main difference between a “coin” and a “token”?",
+    options: [
+      "Coins have no value",
+      "Tokens run on existing blockchains",
+      "Tokens are physical",
+      "Coins are only on Ethereum"
+    ],
+    correctAnswer: 1
+  },
+  // B. Coins are native to their own blockchain; tokens are built on top of another chain.
+
+  // 🔟 NFT Meaning
   {
     id: 10,
-    question: "Which network is known for low fees and fast transactions?",
-    options: ["Ethereum", "Solana", "Bitcoin", "Dogecoin"],
+    question: "NFT stands for:",
+    options: [
+      "Non‑Fungible Token",
+      "New Financial Technology",
+      "Network Fee Token",
+      "Non‑Finance Token"
+    ],
+    correctAnswer: 0
+  },
+  // A. NFTs are unique, indivisible tokens representing one‑of‑a‑kind digital items.
+
+  // Candlestick Clue
+  {
+    id: 11,
+    question: "You spot a single candle with a small body at the top, long lower wick, and little or no upper wick after a downtrend. What does this “hammer” signal typically suggest?",
+    options: [
+      "Continuation of bearish trend",
+      "Potential bullish reversal",
+      "Market indecision",
+      "Imminent price crash"
+    ],
     correctAnswer: 1
+  },
+  // B. A hammer after a downtrend often indicates buyers stepping in—possible bullish reversal.
+
+  // Overbought or Oversold?
+  {
+    id: 12,
+    question: "The RSI on BTC climbs above 80. What’s the classic interpretation?",
+    options: [
+      "Strong bullish momentum",
+      "Overbought—possible pullback",
+      "Oversold—time to buy",
+      "Trend is neutral"
+    ],
+    correctAnswer: 1
+  },
+  // B. RSI above 70–80 usually flags overbought conditions, hinting at a corrective pullback ahead.
+
+  // MACD Magic
+  {
+    id: 13,
+    question: "When the MACD line crosses above the signal line, it’s known as a:",
+    options: [
+      "Death Cross",
+      "Divergence",
+      "Golden Cross",
+      "Volume Spike"
+    ],
+    correctAnswer: 2
   }
+  // C. A MACD “golden cross” suggests bullish momentum building.
 ];
 
 const QUESTION_TIME = 10; // seconds per question

@@ -88,6 +88,16 @@ export default function MultiplayerPage() {
     setQuizStarted(true);
   };
 
+  // Add a helper to format date and time
+  function formatTime(dateString: string) {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString(undefined, {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    });
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50">
       <NavBar />
@@ -119,50 +129,61 @@ export default function MultiplayerPage() {
           )}
           {showLeaderboard && (
             <div className="w-full mt-8">
-              <h2 className="text-2xl font-bold text-blue-700 mb-4 text-center">Live Leaderboard</h2>
-              <div className="bg-white rounded-xl shadow p-6">
-                <table className="w-full text-left text-black">
-                  <thead className="bg-gray-100 text-black">
+              <h2 className="text-2xl font-bold text-blue-700 mb-4 text-center">Live Leaderboard Top 10</h2>
+              <div className="overflow-x-auto rounded-2xl shadow-xl bg-gradient-to-br from-white to-blue-50 border border-blue-100">
+                <table className="min-w-full text-left text-black rounded-2xl overflow-hidden">
+                  <thead className="bg-blue-100 text-blue-700">
                     <tr>
-                      <th className="py-2 px-4 text-black">Player</th>
-                      <th className="py-2 px-4 text-black">Score</th>
-                      <th className="py-2 px-4 text-black">Date</th>
+                      <th className="py-3 px-4 text-base font-bold">#</th>
+                      <th className="py-3 px-4 text-base font-bold">Player</th>
+                      <th className="py-3 px-4 text-base font-bold">Score</th>
+                      <th className="py-3 px-4 text-base font-bold">Time</th>
                     </tr>
                   </thead>
-                  <tbody className="text-black">
+                  <tbody>
                     {leaderboard.map((entry, idx) => (
-                      <tr key={idx} className={idx === 0 ? 'font-bold text-blue-700' : ''}>
-                        <td className="py-2 px-4">{entry.name}</td>
-                        <td className="py-2 px-4">{entry.score}</td>
-                        <td className="py-2 px-4">{new Date(entry.created_at).toLocaleString()}</td>
+                      <tr
+                        key={idx}
+                        className={
+                          `${idx % 2 === 0 ? 'bg-white' : 'bg-blue-50'} ` +
+                          `${idx === 0 ? 'font-bold text-yellow-600' : idx === 1 ? 'font-bold text-gray-500' : idx === 2 ? 'font-bold text-orange-500' : ''}`
+                        }
+                      >
+                        <td className="py-3 px-4 text-xl text-center">
+                          {idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : idx + 1}
+                        </td>
+                        <td className="py-3 px-4">{entry.name}</td>
+                        <td className="py-3 px-4 font-mono">{entry.score}</td>
+                        <td className="py-3 px-4 font-mono">{formatTime(entry.created_at)}</td>
                       </tr>
                     ))}
                     {userScore && (
                       <>
-                        <tr><td colSpan={3} className="py-2 text-center text-gray-400">...</td></tr>
-                        <tr className="font-bold text-green-700">
-                          <td className="py-2 px-4">{userScore.name} (You)</td>
-                          <td className="py-2 px-4">{userScore.score}</td>
-                          <td className="py-2 px-4">{new Date(userScore.created_at).toLocaleString()}</td>
+                        <tr><td colSpan={4} className="py-2 text-center text-gray-400 bg-transparent">...</td></tr>
+                        <tr className="font-bold text-green-700 bg-green-50">
+                          <td className="py-3 px-4 text-center">—</td>
+                          <td className="py-3 px-4">{userScore.name} (You)</td>
+                          <td className="py-3 px-4 font-mono">{userScore.score}</td>
+                          <td className="py-3 px-4 font-mono">{formatTime(userScore.created_at)}</td>
                         </tr>
                       </>
                     )}
                   </tbody>
                 </table>
-                <div className="flex flex-col md:flex-row gap-4 mt-6">
-                  <button
-                    onClick={() => setShowLeaderboard(false)}
-                    className="bg-gray-100 text-gray-700 px-6 py-2 rounded-full font-semibold hover:bg-gray-200 transition w-full md:w-auto"
-                  >
-                    Close Leaderboard
-                  </button>
-                  <button
-                    onClick={handleImproveScore}
-                    className="bg-green-100 text-green-700 px-6 py-2 rounded-full font-semibold hover:bg-green-200 transition w-full md:w-auto"
-                  >
-                    Improve My Score
-                  </button>
-                </div>
+              </div>
+              <div className="flex flex-col md:flex-row gap-4 mt-6">
+                <button
+                  onClick={() => setShowLeaderboard(false)}
+                  className="bg-gray-100 text-gray-700 px-6 py-2 rounded-full font-semibold hover:bg-gray-200 transition w-full md:w-auto"
+                >
+                  Close Leaderboard
+                </button>
+                <button
+                  onClick={handleImproveScore}
+                  className="bg-green-100 text-green-700 px-6 py-2 rounded-full font-semibold hover:bg-green-200 transition w-full md:w-auto"
+                >
+                  Improve My Score
+                </button>
               </div>
             </div>
           )}

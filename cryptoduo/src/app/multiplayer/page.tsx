@@ -99,10 +99,14 @@ export default function MultiplayerPage() {
     setQuizStarted(true);
   };
 
-  // Add a helper to format date and time
-  function formatTime(dateString: string) {
+  // Add a helper to format date and time (date + time)
+  function formatDateTime(dateString: string) {
     const date = new Date(dateString);
-    return date.toLocaleTimeString(undefined, {
+    return date.toLocaleDateString(undefined, {
+      year: 'numeric',
+      month: 'short',
+      day: '2-digit',
+    }) + ' ' + date.toLocaleTimeString(undefined, {
       hour: '2-digit',
       minute: '2-digit',
       hour12: false
@@ -156,7 +160,7 @@ export default function MultiplayerPage() {
                       <th className="py-3 px-4 text-base font-bold">#</th>
                       <th className="py-3 px-4 text-base font-bold">Player</th>
                       <th className="py-3 px-4 text-base font-bold">Score</th>
-                      <th className="py-3 px-4 text-base font-bold">Time</th>
+                      <th className="py-3 px-4 text-base font-bold">Date & Time</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -173,7 +177,7 @@ export default function MultiplayerPage() {
                         </td>
                         <td className="py-3 px-4">{entry.countrycode ? getFlag(entry.countrycode) : ''} {entry.name}</td>
                         <td className="py-3 px-4 font-mono">{entry.score}</td>
-                        <td className="py-3 px-4 font-mono">{formatTime(entry.created_at)}</td>
+                        <td className="py-3 px-4 font-mono">{formatDateTime(entry.created_at)}</td>
                       </tr>
                     ))}
                     {userScore && (
@@ -183,7 +187,7 @@ export default function MultiplayerPage() {
                           <td className="py-3 px-4 text-center">{userScore.rank || '—'}</td>
                           <td className="py-3 px-4">{userScore.countrycode ? getFlag(userScore.countrycode) : ''} {userScore.name} (You)</td>
                           <td className="py-3 px-4 font-mono">{userScore.score}</td>
-                          <td className="py-3 px-4 font-mono">{formatTime(userScore.created_at)}</td>
+                          <td className="py-3 px-4 font-mono">{formatDateTime(userScore.created_at)}</td>
                         </tr>
                       </>
                     )}
